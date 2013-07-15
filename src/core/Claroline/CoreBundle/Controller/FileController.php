@@ -12,7 +12,7 @@ use Claroline\CoreBundle\Library\Resource\ResourceCollection;
 
 class FileController extends Controller
 {
-	/**
+    /**
      * @Route(
      *     "resource/img/{imageId}",
      *     name="claro_file_get_image",
