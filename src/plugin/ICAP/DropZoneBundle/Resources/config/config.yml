@@ -1,0 +1,8 @@
+plugin:
+    has_options: true
+
+    resources:
+        - name: icap_dropzone
+          class: ICAP\DropZoneBundle\Entity\DropZone
+          is_visible: true
+          is_browsable: false
