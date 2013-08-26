@@ -263,6 +263,8 @@ class ResourceController
      */
     public function customAction($resourceType, $action, ResourceNode $node)
     {
+        var_dump("test");
+        die();
         $eventName = $action . '_' . $resourceType;
         //$collection = new ResourceCollection(array($resource));
 
