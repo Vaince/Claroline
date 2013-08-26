@@ -2,7 +2,6 @@ nbproject/*
 !.gitempty
 !placeholder
 *~
-nbproject/*
 app/SymfonyRequirements.php
 app/bootstrap*
 app/build/api
@@ -34,3 +33,4 @@ web/themes/*
 web/thumbnails/*
 web/vendor/*
 .idea/*
+web/uploads/*
