@@ -13,3 +13,4 @@ services:
           - { name: kernel.event_listener, event: create_log_list_item_icap_dropzone, method: onCreateLogListItem }
           - { name: kernel.event_listener, event: create_log_details_icap_dropzone, method: onCreateLogDetails }
           - { name: kernel.event_listener, event: plugin_options_icapdropzone, method: onAdministrate }
+          - { name: kernel.event_listener, event: edit_icap_dropzone, method: onEdit }

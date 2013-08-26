@@ -1,0 +1,168 @@
+{% extends "ICAPDropZoneBundle::layout.html.twig" %}
+{% block dropzone_breadcrumb %}
+    <li class="active">
+        <i class="icon-file"></i>{{ dropZone.resourceNode.name }}
+        <span class="divider">/</span>
+    </li>
+    <li class="active">Edit</li>
+{% endblock %}
+
+{% block dropzone_content %}
+    <div class="container-fluid container-dropzone">
+        <header>
+            <a href="{{ path('icap_dropzone_drops', {'resourceId': dropZone.id}) }}">Drops</a>
+        </header>
+        <h2>Edit drop zone</h2>
+        <div class="navbar">
+            <div class="navbar-inner">
+                <ul class="nav">
+                    <li>
+                        <a href="{{ path('icap_dropzone_edit_common', {'resourceId': dropZone.id}) }}">
+                            {{ 'Common'|trans }}
+                        </a>
+                    </li>
+                    <li class="active">
+                        <a href="{{ path('icap_dropzone_edit_criteria', {'resourceId': dropZone.id}) }}">
+                            {{ 'Peer review criteria'|trans }}
+                        </a>
+                    </li>
+                    <li>
+                        <a href="{{ path('icap_dropzone_edit_participant', {'resourceId': dropZone.id}) }}">
+                            {{ 'Participant'|trans }}
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+        <h3>Common information</h3>
+        <form class="form-horizontal" method="POST" action="{{ path('icap_dropzone_update_common', {'resourceId': dropZone.id}) }}">
+            {{ form_errors(form) }}
+
+            <h4>Instruction</h4>
+            <div class="control-group">
+                <div class="controls">
+                    {{ form_errors(form.instruction) }}
+                    {{ form_widget(form.instruction) }}
+                </div>
+            </div>
+            <h4>Document type allowed</h4>
+            <div class="control-group">
+                <div class="controls">
+                    {{ form_errors(form.allowWorkspaceResource) }}
+                    <label class="checkbox">
+                        {{ form_widget(form.allowWorkspaceResource) }} {{ 'icap_dropzone_form_allowWorkspaceResource'|trans }}
+                    </label>
+
+                    {{ form_errors(form.allowUpload) }}
+                    <label class="checkbox">
+                        {{ form_widget(form.allowUpload) }} {{ 'icap_dropzone_form_allowUpload'|trans }}
+                    </label>
+
+                    {{ form_errors(form.allowUrl) }}
+                    <label class="checkbox">
+                        {{ form_widget(form.allowUrl) }} {{ 'icap_dropzone_form_allowUrl'|trans }}
+                    </label>
+                </div>
+            </div>
+            <h4>Type of evaluation</h4>
+            <div class="control-group">
+                <div class="controls">
+                    {{ form_errors(form.peerReview) }}
+                    {{ form_widget(form.peerReview) }}
+
+                    <label class="radio peer-review-options" {% if not dropZone.peerReview %}style="display: none;"{% endif %}>
+                        {{ form_errors(form.expectedTotalCorrection) }}
+                        {{ 'icap_dropzone_form_expectedTotalCorrection'|trans }}
+                        {{ form_widget(form.expectedTotalCorrection, {'attr': {'class': 'input-mini'}}) }}
+                    </label>
+                    <label class="radio peer-review-options" {% if not dropZone.peerReview %}style="display: none;"{% endif %}>
+                        {{ form_errors(form.allowDropInReview) }}
+                        {{ 'icap_dropzone_form_allowDropInReview'|trans }}
+                        {{ form_widget(form.allowDropInReview) }}
+                    </label>
+                </div>
+            </div>
+            <h4>{{ 'Rating'|trans }}</h4>
+            <div class="control-group">
+                <div class="controls">
+                    {{ form_errors(form.displayNotationToLearners) }}
+                    <label class="checkbox">
+                        {{ form_widget(form.displayNotationToLearners) }} {{ 'icap_dropzone_form_displayNotationToLearners'|trans }}
+                    </label>
+
+                    {{ form_errors(form.displayNotationMessageToLearners) }}
+                    <label class="checkbox">
+                        {{ form_widget(form.displayNotationMessageToLearners) }} {{ 'icap_dropzone_form_displayNotationMessageToLearners'|trans }}
+                    </label>
+
+                    <label class="checkbox">
+                        {{ form_errors(form.minimumScoreToPass) }}
+                        {{ 'icap_dropzone_form_minimumScoreToPass'|trans }}
+                        {{ form_widget(form.minimumScoreToPass, {'attr': {'class': 'input-mini'}}) }}
+                    </label>
+                </div>
+            </div>
+            <h4>{{ 'Planning'|trans }}</h4>
+            {{ form_errors(form.manualPlanning) }}
+            <label class="radio">
+                {{ form_widget(form.manualPlanning.0) }}
+                <strong>{{ 'manualPlanning'|trans }}</strong>
+            </label>
+            <div class="control-group">
+                <div class="controls">
+                    {{ form_errors(form.manualState) }}
+
+                    {{ form_label(form.manualState.0) }}
+                    {{ form_widget(form.manualState.0) }}
+
+                    {{ form_label(form.manualState.1) }}
+                    {{ form_widget(form.manualState.1) }}
+
+                    <label class="radio required peer-review-options" for="icap_dropzone_form_manualState_2" {% if not dropZone.peerReview %}style="display: none;"{% endif %}>
+                        {{ 'peerReviewManualState'|trans }}
+                        {{ form_widget(form.manualState.2, {'attr': {'class': 'peer-review-options'}}) }}
+                    </label>
+
+                </div>
+            </div>
+
+            <label class="radio">
+                {{ form_widget(form.manualPlanning.1) }}
+                <strong>{{ 'scheduleByDatePlanning'|trans }}</strong>
+            </label>
+
+            <div class="control-group">
+                {{ form_errors(form.startAllowDrop) }}
+                {{ form_label(form.startAllowDrop) }}
+                <div class="controls">
+                    {{ form_widget(form.startAllowDrop) }}
+                </div>
+            </div>
+
+            <div class="control-group">
+                {{ form_errors(form.endAllowDrop) }}
+                {{ form_label(form.endAllowDrop) }}
+                <div class="controls">
+                    {{ form_widget(form.endAllowDrop) }}
+                </div>
+            </div>
+
+            <div class="control-group peer-review-options" {% if not dropZone.peerReview %}style="display: none;"{% endif %}>
+                {{ form_errors(form.endReview) }}
+                {{ form_label(form.endReview) }}
+                <div class="controls">
+                    {{ form_widget(form.endReview) }}
+                </div>
+            </div>
+
+            <div class="btn-group pull-right">
+                <button class="btn">Cancel</button>
+                <button type= "submit" class="btn btn-primary">Save and continue</button>
+            </div>
+            {{ form_end(form) }}
+    </div>
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}}
+{% endblock %}

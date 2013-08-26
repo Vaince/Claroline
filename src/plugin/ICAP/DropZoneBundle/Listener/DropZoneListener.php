@@ -2,6 +2,7 @@
 
 namespace ICAP\DropZoneBundle\Listener;
 
+use Claroline\CoreBundle\Event\Event\CustomActionResourceEvent;
 use Claroline\CoreBundle\Event\Event\PluginOptionsEvent;
 use Claroline\CoreBundle\Event\Event\CreateFormResourceEvent;
 use Claroline\CoreBundle\Event\Event\CreateResourceEvent;
@@ -61,6 +62,18 @@ class DropZoneListener extends ContainerAware
             ->get('router')
             ->generate(
                 'icap_dropzone_open',
+                array('resourceId' => $event->getResource()->getId())
+            );
+        $event->setResponse(new RedirectResponse($route));
+        $event->stopPropagation();
+    }
+
+    public function onEdit(CustomActionResourceEvent $event)
+    {
+        $route = $this->container
+            ->get('router')
+            ->generate(
+                'icap_dropzone_edit',
                 array('resourceId' => $event->getResource()->getId())
             );
         $event->setResponse(new RedirectResponse($route));

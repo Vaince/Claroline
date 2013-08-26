@@ -1,0 +1,44 @@
+{% extends "ICAPDropZoneBundle::layout.html.twig" %}
+{% block dropzone_breadcrumb %}
+    <li class="active">
+        <i class="icon-file"></i>{{ dropZone.resourceNode.name }}
+        <span class="divider">/</span>
+    </li>
+    <li class="active">Edit</li>
+{% endblock %}
+
+{% block dropzone_content %}
+    <div class="container-fluid container-dropzone">
+        <header>
+            <a href="{{ path('icap_dropzone_drops', {'resourceId': dropZone.id}) }}">Drops</a>
+        </header>
+        <h2>Edit drop zone</h2>
+        <div class="navbar">
+            <div class="navbar-inner">
+                <ul class="nav">
+                    <li>
+                        <a href="{{ path('icap_dropzone_edit_common', {'resourceId': dropZone.id}) }}">
+                            {{ 'Common'|trans }}
+                        </a>
+                    </li>
+                    {% if dropZone.peerReview %}
+                        <li>
+                            <a href="{{ path('icap_dropzone_edit_criteria', {'resourceId': dropZone.id}) }}">
+                                {{ 'Peer review criteria'|trans }}
+                            </a>
+                        </li>
+                    {% endif %}
+                    <li class="active">
+                        <a href="{{ path('icap_dropzone_edit_participant', {'resourceId': dropZone.id}) }}">
+                            {{ 'Participant'|trans }}
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}}
+{% endblock %}

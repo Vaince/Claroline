@@ -1,6 +1,6 @@
 <?php
 
-namespace ICAP\DropZoneBundle\Migrations\pdo_oci;
+namespace ICAP\DropZoneBundle\Migrations\oci8;
 
 use Doctrine\DBAL\Migrations\AbstractMigration;
 use Doctrine\DBAL\Schema\Schema;
@@ -8,9 +8,9 @@ use Doctrine\DBAL\Schema\Schema;
 /**
  * Auto-generated migration based on mapping information: modify it with caution
  *
- * Generation date: 2013/08/22 10:08:35
+ * Generation date: 2013/08/23 03:23:09
  */
-class Version20130822100833 extends AbstractMigration
+class Version20130823152306 extends AbstractMigration
 {
     public function up(Schema $schema)
     {
@@ -196,8 +196,11 @@ class Version20130822100833 extends AbstractMigration
                 peer_review NUMBER(1) NOT NULL, 
                 expected_total_correction NUMBER(5) NOT NULL, 
                 allow_drop_in_review NUMBER(1) NOT NULL, 
+                display_notation_to_learners NUMBER(1) NOT NULL, 
+                display_notation_message_to_learners NUMBER(1) NOT NULL, 
+                minimum_score_to_pass NUMBER(5) NOT NULL, 
                 manual_planning NUMBER(1) NOT NULL, 
-                manual_state VARCHAR2(255) DEFAULT NULL, 
+                manual_state VARCHAR2(255) NOT NULL, 
                 start_allow_drop TIMESTAMP(0) DEFAULT NULL, 
                 end_allow_drop TIMESTAMP(0) DEFAULT NULL, 
                 end_review TIMESTAMP(0) DEFAULT NULL, 

@@ -1,0 +1,40 @@
+{% extends 'ClarolineCoreBundle:Workspace:layout.html.twig' %}
+
+{% block stylesheets %}
+    {{ parent() }}
+{% endblock %}
+
+{% block section_content %}
+    <header>
+        <ul class="breadcrumb">
+            {% for item in pathArray %}
+                <li>
+                    {% if not loop.last %}
+                        <a href="{{ path('claro_workspace_open_tool', {'workspaceId': workspace.getId(), 'toolName': 'resource_manager'}) }}#resources/{{ item.id }}">
+                            {% if loop.first %}
+                                <i class="icon-folder-open-alt"></i>Ressources 
+                            {% else %}
+                                {{ item.name }}
+                            {% endif %}
+                        </a>
+                        <span class="divider">/</span>
+                    {% endif %}
+                </li>
+            {% endfor %}
+
+            {% block dropzone_breadcrumb %}
+                <li>
+                    <a href="{{ path('icap_dropzone_open', { 'resourceId': dropZone.id }) }}"><i class="icon-file"></i>{{ dropZone.resourceNode.name }}</a>
+                    <span class="divider">/</span>
+                </li>
+            {% endblock %}
+        </ul>
+    </header>
+
+    {% block dropzone_content %}
+    {% endblock %}
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+{% endblock %}

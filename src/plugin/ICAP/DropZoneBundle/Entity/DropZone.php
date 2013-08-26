@@ -18,6 +18,7 @@ use Doctrine\ORM\Mapping as ORM;
  * @ORM\Table(name="icap__dropzonebundle_dropzone")
  */
 class DropZone extends AbstractResource {
+
     /**
      * @ORM\Column(type="text", nullable=true)
      */
@@ -47,13 +48,25 @@ class DropZone extends AbstractResource {
      */
     protected $allowDropInReview = false;
     /**
+     * @ORM\Column(name="display_notation_to_learners", type="boolean", nullable=false)
+     */
+    protected $displayNotationToLearners = true;
+    /**
+     * @ORM\Column(name="display_notation_message_to_learners", type="boolean", nullable=false)
+     */
+    protected $displayNotationMessageToLearners = false;
+    /**
+     * @ORM\Column(name="minimum_score_to_pass", type="smallint", nullable=false)
+     */
+    protected $minimumScoreToPass = 10;
+    /**
      * @ORM\Column(name="manual_planning", type="boolean", nullable=false)
      */
-    protected $manualPlanning = false;
+    protected $manualPlanning = true;
     /**
-     * @ORM\Column(name="manual_state", type="string", nullable=true)
+     * @ORM\Column(name="manual_state", type="string", nullable=false)
      */
-    protected $manualState = null;
+    protected $manualState = 'notStarted';
     /**
      * @ORM\Column(name="start_allow_drop", type="datetime", nullable=true)
      */
@@ -353,5 +366,53 @@ class DropZone extends AbstractResource {
     public function setPeerReviewCriteria($peerReviewCriteria)
     {
         $this->peerReviewCriteria = $peerReviewCriteria;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getDisplayNotationMessageToLearners()
+    {
+        return $this->displayNotationMessageToLearners;
+    }
+
+    /**
+     * @param mixed $displayNotationMessageToLearners
+     */
+    public function setDisplayNotationMessageToLearners($displayNotationMessageToLearners)
+    {
+        $this->displayNotationMessageToLearners = $displayNotationMessageToLearners;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getDisplayNotationToLearners()
+    {
+        return $this->displayNotationToLearners;
+    }
+
+    /**
+     * @param mixed $displayNotationToLearners
+     */
+    public function setDisplayNotationToLearners($displayNotationToLearners)
+    {
+        $this->displayNotationToLearners = $displayNotationToLearners;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getMinimumScoreToPass()
+    {
+        return $this->minimumScoreToPass;
+    }
+
+    /**
+     * @param mixed $minimumScoreToPass
+     */
+    public function setMinimumScoreToPass($minimumScoreToPass)
+    {
+        $this->minimumScoreToPass = $minimumScoreToPass;
     }
 }
