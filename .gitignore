@@ -33,3 +33,4 @@ web/js/*
 web/themes/*
 web/thumbnails/*
 web/vendor/*
+.idea/*
