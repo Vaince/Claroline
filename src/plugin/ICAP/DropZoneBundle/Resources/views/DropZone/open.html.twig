@@ -1,10 +1,10 @@
 {% extends "ICAPDropZoneBundle::layout.html.twig" %}
 {% block dropzone_breadcrumb %}
-    <li class="active"><i class="icon-file"></i>{{ dropZone.resourceNode.name }}</li>
+    <li class="active"><i class=".glyphicon .glyphicon-file"></i>{{ dropZone.resourceNode.name }}</li>
 {% endblock %}
 
 {% block dropzone_content %}
-    <div class="container-fluid container-dropzone">
+    <div class="container container-dropzone">
         <header>
             <div class="pull-right">
                 <a href="{{ path('icap_dropzone_edit', {'resourceId': dropZone.id}) }}">Edit</a>

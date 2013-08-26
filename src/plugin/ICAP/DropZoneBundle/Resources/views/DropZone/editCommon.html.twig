@@ -1,14 +1,14 @@
 {% extends "ICAPDropZoneBundle::layout.html.twig" %}
 {% block dropzone_breadcrumb %}
     <li class="active">
-        <i class="icon-file"></i>{{ dropZone.resourceNode.name }}
+        <i class=".glyphicon .glyphicon-file"></i>{{ dropZone.resourceNode.name }}
         <span class="divider">/</span>
     </li>
     <li class="active">Edit</li>
 {% endblock %}
 
 {% block dropzone_content %}
-    <div class="container-fluid container-dropzone">
+    <div class="container container-dropzone">
         <header>
             <a href="{{ path('icap_dropzone_drops', {'resourceId': dropZone.id}) }}">Drops</a>
         </header>
@@ -73,7 +73,7 @@
                     <label class="radio peer-review-options" {% if not dropZone.peerReview %}style="display: none;"{% endif %}>
                         {{ form_errors(form.expectedTotalCorrection) }}
                         {{ 'icap_dropzone_form_expectedTotalCorrection'|trans }}
-                        {{ form_widget(form.expectedTotalCorrection, {'attr': {'class': 'input-mini'}}) }}
+                        {{ form_widget(form.expectedTotalCorrection, {'attr': {'class': 'col-lg-1'}}) }}
                     </label>
                     <label class="radio peer-review-options" {% if not dropZone.peerReview %}style="display: none;"{% endif %}>
                         {{ form_errors(form.allowDropInReview) }}
@@ -156,7 +156,7 @@
             </div>
 
             <div class="btn-group pull-right">
-                <button class="btn">Cancel</button>
+                <button class="btn btn-default">Cancel</button>
                 <button type= "submit" class="btn btn-primary">Save and continue</button>
             </div>
         {{ form_end(form) }}
