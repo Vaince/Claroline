@@ -80,6 +80,19 @@ class DropZoneListener extends ContainerAware
         $event->stopPropagation();
     }
 
+
+    public function onDrops(CustomActionResourceEvent $event)
+    {
+        $route = $this->container
+            ->get('router')
+            ->generate(
+                'icap_dropzone_drops',
+                array('resourceId' => $event->getResource()->getId())
+            );
+        $event->setResponse(new RedirectResponse($route));
+        $event->stopPropagation();
+    }
+
     public function onDelete(DeleteResourceEvent $event)
     {
 //        $em = $this->container->get('doctrine.orm.entity_manager');

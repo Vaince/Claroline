@@ -9,3 +9,5 @@ plugin:
           actions:
             - name: edit
               is_action_in_new_page: false
+            - name: drops
+              is_action_in_new_page: false

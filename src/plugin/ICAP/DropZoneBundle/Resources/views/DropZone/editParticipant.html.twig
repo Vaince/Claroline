@@ -14,26 +14,26 @@
         </header>
         <h2>Edit drop zone</h2>
         <div class="navbar">
-            <div class="navbar-inner">
-                <ul class="nav">
-                    <li>
-                        <a href="{{ path('icap_dropzone_edit_common', {'resourceId': dropZone.id}) }}">
-                            {{ 'Common'|trans }}
-                        </a>
-                    </li>
-                    {% if dropZone.peerReview %}
+            <div class="navbar navbar-default" role="navigation">
+                <div class="collapse navbar-collapse navbar-ex1-collapse">
+                    <ul class="nav navbar-nav">
                         <li>
+                            <a href="{{ path('icap_dropzone_edit_common', {'resourceId': dropZone.id}) }}">
+                                {{ 'Common'|trans }}
+                            </a>
+                        </li>
+                        <li class="peer-review-options"{% if not dropZone.peerReview %}style="display: none;"{% endif %}>
                             <a href="{{ path('icap_dropzone_edit_criteria', {'resourceId': dropZone.id}) }}">
                                 {{ 'Peer review criteria'|trans }}
                             </a>
                         </li>
-                    {% endif %}
-                    <li class="active">
-                        <a href="{{ path('icap_dropzone_edit_participant', {'resourceId': dropZone.id}) }}">
-                            {{ 'Participant'|trans }}
-                        </a>
-                    </li>
-                </ul>
+                        <li class="active">
+                            <a href="{{ path('icap_dropzone_edit_participant', {'resourceId': dropZone.id}) }}">
+                                {{ 'Participant'|trans }}
+                            </a>
+                        </li>
+                    </ul>
+                </div>
             </div>
         </div>
     </div>
