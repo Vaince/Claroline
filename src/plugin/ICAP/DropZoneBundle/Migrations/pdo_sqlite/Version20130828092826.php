@@ -8,9 +8,9 @@ use Doctrine\DBAL\Schema\Schema;
 /**
  * Auto-generated migration based on mapping information: modify it with caution
  *
- * Generation date: 2013/08/23 03:23:08
+ * Generation date: 2013/08/28 09:28:31
  */
-class Version20130823152306 extends AbstractMigration
+class Version20130828092826 extends AbstractMigration
 {
     public function up(Schema $schema)
     {
@@ -34,7 +34,7 @@ class Version20130823152306 extends AbstractMigration
             CREATE TABLE icap__dropzonebundle_criterion (
                 id INTEGER NOT NULL, 
                 drop_zone_id INTEGER NOT NULL, 
-                instruction VARCHAR(255) NOT NULL, 
+                instruction CLOB NOT NULL, 
                 PRIMARY KEY(id)
             )
         ");

@@ -21,7 +21,7 @@ class Criterion {
      */
     protected $id;
     /**
-     * @ORM\Column(name="instruction", type="string", nullable=false)
+     * @ORM\Column(name="instruction", type="text", nullable=false)
      */
     protected $instruction;
     /**

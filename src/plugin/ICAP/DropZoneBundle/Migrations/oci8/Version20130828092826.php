@@ -1,6 +1,6 @@
 <?php
 
-namespace ICAP\DropZoneBundle\Migrations\pdo_oci;
+namespace ICAP\DropZoneBundle\Migrations\oci8;
 
 use Doctrine\DBAL\Migrations\AbstractMigration;
 use Doctrine\DBAL\Schema\Schema;
@@ -8,9 +8,9 @@ use Doctrine\DBAL\Schema\Schema;
 /**
  * Auto-generated migration based on mapping information: modify it with caution
  *
- * Generation date: 2013/08/23 03:23:08
+ * Generation date: 2013/08/28 09:28:32
  */
-class Version20130823152306 extends AbstractMigration
+class Version20130828092826 extends AbstractMigration
 {
     public function up(Schema $schema)
     {
@@ -62,7 +62,7 @@ class Version20130823152306 extends AbstractMigration
             CREATE TABLE icap__dropzonebundle_criterion (
                 id NUMBER(10) NOT NULL, 
                 drop_zone_id NUMBER(10) NOT NULL, 
-                instruction VARCHAR2(255) NOT NULL, 
+                instruction CLOB NOT NULL, 
                 PRIMARY KEY(id)
             )
         ");

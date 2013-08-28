@@ -1,39 +1,26 @@
-{% extends "ICAPDropZoneBundle::layout.html.twig" %}
-{% block dropzone_breadcrumb %}
-    <li class="active">
-        <i class=".glyphicon .glyphicon-file"></i>{{ dropZone.resourceNode.name }}
-        <span class="divider">/</span>
-    </li>
-    <li class="active">Edit</li>
-{% endblock %}
+{% extends "ICAPDropZoneBundle:DropZone:edit.html.twig" %}
 
-{% block dropzone_content %}
-    <div class="container container-dropzone">
-        <header>
-            <a href="{{ path('icap_dropzone_drops', {'resourceId': dropZone.id}) }}">Drops</a>
-        </header>
-        <h2>Edit drop zone</h2>
-        <div class="navbar">
-            <div class="navbar navbar-default" role="navigation">
-                <div class="collapse navbar-collapse navbar-ex1-collapse">
-                    <ul class="nav navbar-nav">
-                        <li>
-                            <a href="{{ path('icap_dropzone_edit_common', {'resourceId': dropZone.id}) }}">
-                                {{ 'Common'|trans }}
-                            </a>
-                        </li>
-                        <li class="peer-review-options"{% if not dropZone.peerReview %}style="display: none;"{% endif %}>
-                            <a href="{{ path('icap_dropzone_edit_criteria', {'resourceId': dropZone.id}) }}">
-                                {{ 'Peer review criteria'|trans }}
-                            </a>
-                        </li>
-                        <li class="active">
-                            <a href="{{ path('icap_dropzone_edit_participant', {'resourceId': dropZone.id}) }}">
-                                {{ 'Participant'|trans }}
-                            </a>
-                        </li>
-                    </ul>
-                </div>
+{% block drop_zone_content_edit %}
+    <div class="navbar">
+        <div class="navbar navbar-default" role="navigation">
+            <div class="collapse navbar-collapse navbar-ex1-collapse">
+                <ul class="nav navbar-nav">
+                    <li>
+                        <a href="{{ path('icap_dropzone_edit_common', {'resourceId': dropZone.id}) }}">
+                            {{ 'Common'|trans }}
+                        </a>
+                    </li>
+                    <li class="peer-review-options"{% if not dropZone.peerReview %}style="display: none;"{% endif %}>
+                        <a href="{{ path('icap_dropzone_edit_criteria', {'resourceId': dropZone.id}) }}">
+                            {{ 'Peer review criteria'|trans }}
+                        </a>
+                    </li>
+                    <li class="active">
+                        <a href="{{ path('icap_dropzone_edit_participant', {'resourceId': dropZone.id}) }}">
+                            {{ 'Participant'|trans }}
+                        </a>
+                    </li>
+                </ul>
             </div>
         </div>
     </div>

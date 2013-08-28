@@ -1,6 +1,6 @@
 <?php
 
-namespace ICAP\DropZoneBundle\Migrations\pdo_mysql;
+namespace ICAP\DropZoneBundle\Migrations\mysqli;
 
 use Doctrine\DBAL\Migrations\AbstractMigration;
 use Doctrine\DBAL\Schema\Schema;
@@ -8,9 +8,9 @@ use Doctrine\DBAL\Schema\Schema;
 /**
  * Auto-generated migration based on mapping information: modify it with caution
  *
- * Generation date: 2013/08/23 03:23:08
+ * Generation date: 2013/08/28 09:28:33
  */
-class Version20130823152306 extends AbstractMigration
+class Version20130828092826 extends AbstractMigration
 {
     public function up(Schema $schema)
     {
@@ -32,7 +32,7 @@ class Version20130823152306 extends AbstractMigration
             CREATE TABLE icap__dropzonebundle_criterion (
                 id INT AUTO_INCREMENT NOT NULL, 
                 drop_zone_id INT NOT NULL, 
-                instruction VARCHAR(255) NOT NULL, 
+                instruction LONGTEXT NOT NULL, 
                 INDEX IDX_F94B3BA7A8C6E7BD (drop_zone_id), 
                 PRIMARY KEY(id)
             ) DEFAULT CHARACTER SET utf8 COLLATE utf8_unicode_ci ENGINE = InnoDB

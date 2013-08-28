@@ -8,24 +8,22 @@
     <header>
         <ul class="breadcrumb">
             {% for item in pathArray %}
-                <li>
-                    {% if not loop.last %}
+                {% if not loop.last %}
+                    <li>
                         <a href="{{ path('claro_workspace_open_tool', {'workspaceId': workspace.getId(), 'toolName': 'resource_manager'}) }}#resources/{{ item.id }}">
                             {% if loop.first %}
-                                <i class="icon-folder-open-alt"></i>Ressources 
+                                <span class="glyphicon icon-folder-open-alt"></span> {{ 'Resource'|trans }}
                             {% else %}
                                 {{ item.name }}
                             {% endif %}
                         </a>
-                        <span class="divider">/</span>
-                    {% endif %}
-                </li>
+                    </li>
+                {% endif %}
             {% endfor %}
 
             {% block dropzone_breadcrumb %}
                 <li>
-                    <a href="{{ path('icap_dropzone_open', { 'resourceId': dropZone.id }) }}"><i class="icon-file"></i>{{ dropZone.resourceNode.name }}</a>
-                    <span class="divider">/</span>
+                    <a href="{{ path('icap_dropzone_open', { 'resourceId': dropZone.id }) }}"><span class="glyphicon icon-file"></span> {{ dropZone.resourceNode.name }}</a>
                 </li>
             {% endblock %}
         </ul>

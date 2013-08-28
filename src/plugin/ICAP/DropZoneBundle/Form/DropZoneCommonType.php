@@ -11,7 +11,7 @@ class DropZoneCommonType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
-            ->add('instruction', 'textarea')
+            ->add('instruction', 'textarea', array('required' => false))
 
             ->add('allowWorkspaceResource', 'checkbox', array('required' => false))
             ->add('allowUpload', 'checkbox', array('required' => false))
@@ -58,7 +58,7 @@ class DropZoneCommonType extends AbstractType
 
     public function getName()
     {
-        return 'icap_dropzone_form';
+        return 'icap_dropzone_common_form';
     }
 
     public function setDefaultOptions(OptionsResolverInterface $resolver)

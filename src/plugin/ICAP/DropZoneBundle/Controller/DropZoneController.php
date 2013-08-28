@@ -8,8 +8,11 @@
 namespace ICAP\DropZoneBundle\Controller;
 
 use Claroline\CoreBundle\Library\Resource\ResourceCollection;
+use ICAP\DropZoneBundle\Entity\Criterion;
 use ICAP\DropZoneBundle\Entity\DropZone;
+use ICAP\DropZoneBundle\Form\CriterionType;
 use ICAP\DropZoneBundle\Form\DropZoneCommonType;
+use ICAP\DropZoneBundle\Form\DropZoneCriteriaType;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
@@ -55,7 +58,8 @@ class DropZoneController extends Controller {
 
         return array(
             'workspace' => $dropZone->getResourceNode()->getWorkspace(),
-            'dropZone' => $dropZone
+            'dropZone' => $dropZone,
+            'pathArray' => $dropZone->getPathArray(),
         );
     }
     /**
@@ -76,7 +80,8 @@ class DropZoneController extends Controller {
 
         return array(
             'workspace' => $dropZone->getResourceNode()->getWorkspace(),
-            'dropZone' => $dropZone
+            'dropZone' => $dropZone,
+            'pathArray' => $dropZone->getPathArray(),
         );
     }
 
@@ -107,6 +112,7 @@ class DropZoneController extends Controller {
         return array(
             'workspace' => $dropZone->getResourceNode()->getWorkspace(),
             'dropZone' => $dropZone,
+            'pathArray' => $dropZone->getPathArray(),
             'form' => $form->createView()
         );
     }
@@ -159,6 +165,7 @@ class DropZoneController extends Controller {
         return array(
             'workspace' => $dropZone->getResourceNode()->getWorkspace(),
             'dropZone' => $dropZone,
+            'pathArray' => $dropZone->getPathArray(),
             'form' => $form->createView()
         );
     }
@@ -180,11 +187,155 @@ class DropZoneController extends Controller {
         $this->isAllowToOpen($dropZone);
         $this->isAllowToEdit($dropZone);
 
+        $form = $this->createForm(new DropZoneCriteriaType(), $dropZone);
+
         return array(
             'workspace' => $dropZone->getResourceNode()->getWorkspace(),
-            'dropZone' => $dropZone
+            'dropZone' => $dropZone,
+            'pathArray' => $dropZone->getPathArray(),
+            'criteria' => $dropZone->getPeerReviewCriteria(),
+            'form' => $form->createView()
         );
     }
+
+    /**
+     * @Route(
+     *      "/{resourceId}/edit/addcriterion/{criterionId}",
+     *      name="icap_dropzone_edit_add_criterion",
+     *      requirements={"resourceId" = "\d+", "criterionId" = "\d+"},
+     *      defaults={"criterionId" = 0}
+     * )
+     * @ParamConverter("dropZone", class="ICAPDropZoneBundle:DropZone", options={"id" = "resourceId"})
+     * @ParamConverter("user", options={"authenticatedUser" = true})
+     * @Template()
+     */
+    public function editAddCriterionAction($dropZone, $user, $criterionId)
+    {
+        $this->isAllowToOpen($dropZone);
+        $this->isAllowToEdit($dropZone);
+
+        $criterion = new Criterion();
+        if ($criterionId != 0) {
+            $criterion = $this
+                ->getDoctrine()
+                ->getManager()
+                ->getRepository('ICAPDropZoneBundle:Criterion')
+                ->find($criterionId);
+        }
+
+        $form = $this->createForm(new CriterionType(), $criterion);
+
+        return array(
+            'workspace' => $dropZone->getResourceNode()->getWorkspace(),
+            'dropZone' => $dropZone,
+            'pathArray' => $dropZone->getPathArray(),
+            'form' => $form->createView(),
+            'criterion' => $criterion
+        );
+    }
+
+    /**
+     * @Route(
+     *      "/{resourceId}/edit/createcriterion/{criterionId}",
+     *      name="icap_dropzone_edit_create_criterion",
+     *      requirements={"resourceId" = "\d+", "criterionId" = "\d+"},
+     *      defaults={"criterionId" = 0}
+     * )
+     * @ParamConverter("dropZone", class="ICAPDropZoneBundle:DropZone", options={"id" = "resourceId"})
+     * @ParamConverter("user", options={"authenticatedUser" = true})
+     * @Template("ICAPDropZoneBundle:DropZone:editAddCriteria.html.twig")
+     */
+    public function editCreateCriterionAction($dropZone, $user, $criterionId)
+    {
+        $this->isAllowToOpen($dropZone);
+        $this->isAllowToEdit($dropZone);
+
+
+        $criterion = new Criterion();
+        if ($criterionId != 0) {
+            $criterion = $this
+                ->getDoctrine()
+                ->getManager()
+                ->getRepository('ICAPDropZoneBundle:Criterion')
+                ->find($criterionId);
+        }
+
+        $form = $this->createForm(new CriterionType(), $criterion);
+        $form->handleRequest($this->getRequest());
+
+        if ($form->isValid()) {
+            $criterion = $form->getData();
+            $criterion->setDropZone($dropZone);
+
+            $em = $this->getDoctrine()->getManager();
+            $em->persist($criterion);
+            $em->flush();
+
+            return $this->redirect(
+                $this->generateUrl(
+                    'icap_dropzone_edit_criteria',
+                    array(
+                        'resourceId' => $dropZone->getId()
+                    )
+                )
+            );
+        }
+
+        return array(
+            'workspace' => $dropZone->getResourceNode()->getWorkspace(),
+            'dropZone' => $dropZone,
+            'pathArray' => $dropZone->getPathArray(),
+            'form' => $form->createView()
+        );
+    }
+
+
+    /**
+     * @Route(
+     *      "/{resourceId}/edit/deletecriterion/{criterionId}",
+     *      name="icap_dropzone_edit_delete_criterion",
+     *      requirements={"resourceId" = "\d+", "criterionId" = "\d+"}
+     * )
+     * @ParamConverter("dropZone", class="ICAPDropZoneBundle:DropZone", options={"id" = "resourceId"})
+     * @ParamConverter("criterion", class="ICAPDropZoneBundle:Criterion", options={"id" = "criterionId"})
+     * @ParamConverter("user", options={"authenticatedUser" = true})
+     * @Template("ICAPDropZoneBundle:DropZone:editAddCriteria.html.twig")
+     */
+    public function editDeleteCriterionAction($dropZone, $user, $criterion)
+    {
+        $this->isAllowToOpen($dropZone);
+        $this->isAllowToEdit($dropZone);
+
+        $form = $this->createForm(new CriterionType(), $criterion);
+        $form->handleRequest($this->getRequest());
+
+        if ($form->isValid()) {
+            $criterion = $form->getData();
+            $criterion->setDropZone($dropZone);
+
+            $em = $this->getDoctrine()->getManager();
+            $em->persist($criterion);
+            $em->flush();
+
+            return $this->redirect(
+                $this->generateUrl(
+                    'icap_dropzone_edit_criteria',
+                    array(
+                        'resourceId' => $dropZone->getId()
+                    )
+                )
+            );
+        }
+
+        return array(
+            'workspace' => $dropZone->getResourceNode()->getWorkspace(),
+            'dropZone' => $dropZone,
+            'pathArray' => $dropZone->getPathArray(),
+            'form' => $form->createView()
+        );
+    }
+
+
 
     /**
      * @Route(
@@ -204,9 +355,8 @@ class DropZoneController extends Controller {
 
         return array(
             'workspace' => $dropZone->getResourceNode()->getWorkspace(),
-            'dropZone' => $dropZone
+            'dropZone' => $dropZone,
+            'pathArray' => $dropZone->getPathArray(),
         );
     }
-
-
 }

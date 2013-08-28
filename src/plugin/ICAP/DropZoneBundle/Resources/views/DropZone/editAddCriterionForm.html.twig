@@ -1,0 +1,25 @@
+<form class="form-horizontal" method="POST" action="{{ path('icap_dropzone_edit_create_criterion', {'resourceId': dropZone.id, 'criterionId':criterion.id}) }}">
+    {{ form_errors(form) }}
+
+    <div class="form-group">
+        {{ form_errors(form.instruction) }}
+        <label for="icap_dropzone_criterion_form_instruction" class="col-lg-2 control-label">
+            {{ 'icap_dropzone_criterion_form_instruction'|trans }}
+        </label>
+        <div class="col-lg-10">
+            {{ form_widget(form.instruction, {'attr': {'class': 'form-control'}}) }}
+        </div>
+    </div>
+
+    <div class="form-group">
+        <div class="col-lg-offset-2 col-lg-10">
+            <button type="submit" class="btn btn-primary">
+                {% if criterion.id == 0 %}
+                    {{ 'Create'|trans }}
+                {% else %}
+                    {{ 'dropZone_edit'|trans }}
+                {% endif %}
+            </button>
+        </div>
+    </div>
+{{ form_end(form) }}

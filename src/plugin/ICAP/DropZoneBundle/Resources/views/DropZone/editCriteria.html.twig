@@ -1,41 +1,89 @@
-{% extends "ICAPDropZoneBundle::layout.html.twig" %}
-{% block dropzone_breadcrumb %}
-    <li class="active">
-        <i class=".glyphicon .glyphicon-file"></i>{{ dropZone.resourceNode.name }}
-        <span class="divider">/</span>
-    </li>
-    <li class="active">Edit</li>
+{% extends "ICAPDropZoneBundle:DropZone:edit.html.twig" %}
+
+{% block drop_zone_content_edit %}
+    <div class="navbar navbar-default" role="navigation">
+        <div class="collapse navbar-collapse navbar-ex1-collapse">
+            <ul class="nav navbar-nav">
+                <li>
+                    <a href="{{ path('icap_dropzone_edit_common', {'resourceId': dropZone.id}) }}">
+                        {{ 'Common'|trans }}
+                    </a>
+                </li>
+                <li class="active">
+                    <a href="{{ path('icap_dropzone_edit_criteria', {'resourceId': dropZone.id}) }}">
+                        {{ 'Peer review criteria'|trans }}
+                    </a>
+                </li>
+                <li class="disabled">
+                    <a href="#">
+                        {{ 'Participant'|trans }}
+                    </a>
+                </li>
+            </ul>
+        </div>
+    </div>
+    <h3>{{ 'Evaluation Criteria'|trans }}</h3>
+
+    <div class="container">
+        <form class="form-horizontal" method="POST" action="#">
+            <div class="row">
+                <br/>
+                <div class="form-group">
+                    {{ form_errors(form.totalCriteriaColumn) }}
+                    <label for="icap_dropzone_criteria_form_totalCriteriaColumn" class="col-lg-3 control-label">
+                        {{ 'icap_dropzone_criteria_form_totalCriteriaColumn'|trans }}
+                    </label>
+                    <div class="col-lg-2">
+                        {{ form_widget(form.totalCriteriaColumn, {'attr': {'class': 'form-control'}}) }}
+                    </div>
+                </div>
+            </div>
+
+            <div class="row">
+                <a href="{{ path('icap_dropzone_edit_add_criterion', {'resourceId': dropZone.id}) }}" class="btn btn-primary pull-right">{{ 'Add a criterion'|trans }}</a>
+            </div>
+            {% for criterion in criteria %}
+                <div class="container row">
+                    <div class="row">
+                        {{ criterion.instruction }}
+                    </div>
+                    <div class="row pull-right">
+                        <a href="{{ path('icap_dropzone_edit_add_criterion', {'resourceId': dropZone.id, 'criterionId': criterion.id}) }}" class="btn btn-default">{{ 'dropZone_edit'|trans }}</a>
+                        <a href="#" class="btn btn-danger">{{ 'Delete'|trans }}</a>
+                    </div>
+                </div>
+            {% endfor %}
+            <div class="row">
+                <a href="{{ path('icap_dropzone_edit_add_criterion', {'resourceId': dropZone.id}) }}" class="btn btn-primary pull-right">{{ 'Add a criterion'|trans }}</a>
+            </div>
+
+            <div class="row">
+                {{ form_errors(form.allowCommentInCorrection) }}
+                <div class="checkbox pull-right">
+                    <label>
+                        {{ form_widget(form.allowCommentInCorrection) }} {{ 'icap_dropzone_criteria_form_allowCommentInCorrection'|trans }}
+                    </label>
+                </div>
+            </div>
+
+            {{ form_rest(form) }}
+            <div class="row">
+                <div class="btn-group pull-right">
+                    <a href="{{ path('icap_dropzone_edit_common', {'resourceId': dropZone.getId()}) }}" class="btn btn-default">{{ 'Return'|trans }}</a>
+                    <button type= "submit" class="btn btn-primary">{{ 'Save and continue'|trans }}</button>
+                </div>
+            </div>
+        </form>
+    </div>
 {% endblock %}
 
-{% block dropzone_content %}
-    <div class="container container-dropzone">
-        <header>
-            <a href="{{ path('icap_dropzone_drops', {'resourceId': dropZone.id}) }}">Drops</a>
-        </header>
-        <h2>Edit drop zone</h2>
-        <div class="navbar navbar-default" role="navigation">
-            <div class="collapse navbar-collapse navbar-ex1-collapse">
-                <ul class="nav navbar-nav">
-                    <li>
-                        <a href="{{ path('icap_dropzone_edit_common', {'resourceId': dropZone.id}) }}">
-                            {{ 'Common'|trans }}
-                        </a>
-                    </li>
-                    <li class="active">
-                        <a href="{{ path('icap_dropzone_edit_criteria', {'resourceId': dropZone.id}) }}">
-                            {{ 'Peer review criteria'|trans }}
-                        </a>
-                    </li>
-                    <li>
-                        <a href="{{ path('icap_dropzone_edit_participant', {'resourceId': dropZone.id}) }}">
-                            {{ 'Participant'|trans }}
-                        </a>
-                    </li>
-                </ul>
-            </div>
-        </div>
-        <h3>Criteria</h3>
-    </div>
+{% block stylesheets %}
+    {{ parent() }}
+    <style>
+        .row {
+            padding-top: 10px;
+        }
+    </style>
 {% endblock %}
 
 {% block javascripts %}
