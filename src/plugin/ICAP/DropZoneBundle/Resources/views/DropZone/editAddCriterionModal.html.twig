@@ -1,0 +1,43 @@
+<div id="modal-content" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                <h3 id="myModalLabel">
+                    {% if criterion.id == 0 %}
+                        {{ 'Add a criterion'|trans }}
+                    {% else %}
+                        {{ 'Edit a criterion'|trans }}
+                    {% endif %}
+                </h3>
+            </div>
+            <div class="modal-body">
+                {% include "ICAPDropZoneBundle:DropZone:editAddCriterionForm.html.twig" %}
+            </div>
+            <div class="modal-footer">
+                <div class="btn-group">
+                    <button class="btn btn-default" data-dismiss="modal" aria-hidden="true">{% trans %}Cancel{% endtrans %}</button>
+                    <button id="form-submit" class="btn btn-primary">
+                        {% if criterion.id == 0 %}
+                            {% trans %}Add a criterion{% endtrans %}
+                        {% else %}
+                            {% trans %}dropZone_edit{% endtrans %}
+                        {% endif %}
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script type="text/javascript">
+        $(document).ready(function () {
+            $('.form-buttons').hide();
+
+            $('#form-submit').on('click', function () {
+                console.log('ouai');
+                //I do the "click" on submit button for keep html5 warning
+                $('.modal-body button[type="submit"]').trigger('click');
+            });
+        });
+    </script>
+</div>

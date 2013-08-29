@@ -25,36 +25,94 @@
     <h3>{{ 'Evaluation Criteria'|trans }}</h3>
 
     <div class="container">
-        <form class="form-horizontal" method="POST" action="#">
+        <form class="form-horizontal" method="POST" action="{{ path('icap_dropzone_update_criteria', {'resourceId': dropZone.id}) }}">
             <div class="row">
                 <br/>
-                <div class="form-group">
+
+                <div class="row column-input-js" style="display: none;">
+                    <label class="col-md-4 control-label">
+                        Ajouter ou retirer une colonne
+                    </label>
+                    <div class="col-md-2" style="padding-top: 7px;">
+                        <a href="#" class="remove-column"><span class="glyphicon icon-minus-sign-alt"></span> </a>
+                        <a href="#" class="add-column"><span class="glyphicon icon-plus-sign-alt"></span> </a>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="pull-right">
+                            <label class="control-label">Pas du tout</label>
+                            <span class="column-container">
+                                {% for i in 1..dropZone.totalCriteriaColumn %}
+                                    <input type="radio" disabled />
+                                {% endfor %}
+                            </span>
+                            <label class="control-label">Tout à fait</label>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-group column-input">
                     {{ form_errors(form.totalCriteriaColumn) }}
-                    <label for="icap_dropzone_criteria_form_totalCriteriaColumn" class="col-lg-3 control-label">
+                    <label for="icap_dropzone_criteria_form_totalCriteriaColumn" class="col-md-3 control-label">
                         {{ 'icap_dropzone_criteria_form_totalCriteriaColumn'|trans }}
                     </label>
-                    <div class="col-lg-2">
+                    <div class="col-md-2">
                         {{ form_widget(form.totalCriteriaColumn, {'attr': {'class': 'form-control'}}) }}
                     </div>
                 </div>
             </div>
 
             <div class="row">
-                <a href="{{ path('icap_dropzone_edit_add_criterion', {'resourceId': dropZone.id}) }}" class="btn btn-primary pull-right">{{ 'Add a criterion'|trans }}</a>
+                <a href="{{ path('icap_dropzone_edit_add_criterion', {'resourceId': dropZone.id, 'page': pager.currentPage}) }}" class="btn btn-primary pull-right launch-modal">{{ 'Add a criterion'|trans }}</a>
             </div>
-            {% for criterion in criteria %}
-                <div class="container row">
-                    <div class="row">
-                        {{ criterion.instruction }}
-                    </div>
-                    <div class="row pull-right">
-                        <a href="{{ path('icap_dropzone_edit_add_criterion', {'resourceId': dropZone.id, 'criterionId': criterion.id}) }}" class="btn btn-default">{{ 'dropZone_edit'|trans }}</a>
-                        <a href="#" class="btn btn-danger">{{ 'Delete'|trans }}</a>
-                    </div>
-                </div>
-            {% endfor %}
+
             <div class="row">
-                <a href="{{ path('icap_dropzone_edit_add_criterion', {'resourceId': dropZone.id}) }}" class="btn btn-primary pull-right">{{ 'Add a criterion'|trans }}</a>
+            {% if pager.haveToPaginate %}
+                {{
+                pagerfanta(
+                pager,
+                'twitter_bootstrap_translated',
+                {
+                'proximity' : 1,
+                'routeName': 'icap_dropzone_edit_criteria_paginated',
+                'routeParams': {'resourceId': dropZone.id}
+                }
+                )
+                }}
+            {% endif %}
+            </div>
+
+            {% if pager %}
+                {% for criterion in pager.currentPageResults %}
+                    <div class="container row">
+                        <div class="row">
+                            {{ criterion.instruction }}
+                        </div>
+                        <div class="row pull-right">
+                            <a href="{{ path('icap_dropzone_edit_add_criterion', {'resourceId': dropZone.id, 'page': pager.currentPage, 'criterionId': criterion.id}) }}" class="btn btn-default launch-modal">{{ 'dropZone_edit'|trans }}</a>
+                            <a href="{{ path('icap_dropzone_edit_delete_criterion', {'resourceId': dropZone.id, 'page': pager.currentPage, 'criterionId': criterion.id}) }}" class="btn btn-danger launch-modal">{{ 'Delete'|trans }}</a>
+                        </div>
+                    </div>
+                {% endfor %}
+            {% endif %}
+
+            <div class="row">
+                {% if pager.haveToPaginate %}
+                    {{
+                    pagerfanta(
+                    pager,
+                    'twitter_bootstrap_translated',
+                    {
+                    'proximity' : 1,
+                    'routeName': 'icap_dropzone_edit_criteria_paginated',
+                    'routeParams': {'resourceId': dropZone.id}
+                    }
+                    )
+                    }}
+                {% endif %}
+            </div>
+
+            <div class="row">
+                <a href="{{ path('icap_dropzone_edit_add_criterion', {'resourceId': dropZone.id, 'page': pager.currentPage}) }}" class="btn btn-primary pull-right launch-modal">{{ 'Add a criterion'|trans }}</a>
             </div>
 
             <div class="row">
@@ -88,4 +146,35 @@
 
 {% block javascripts %}
     {{ parent() }}}
+    <script src="{{ asset('bundles/icapdropzone/js/popup.js') }}"></script>
+    <script>
+        $(document).ready(function () {
+            $('.column-input').hide();
+            $('.column-input-js').show();
+
+            var totalColumn = {{ dropZone.totalCriteriaColumn }};
+
+            $('.add-column').on('click', function(event) {
+                event.preventDefault();
+                if (totalColumn < 10) {
+                    console.log('add');
+                    $('.column-container').append('<input type="radio" disabled style="margin-right: 4px; margin-left: 0px; padding-right: 0px; padding-left: 0px"/>');
+                    totalColumn++;
+
+                    $('#icap_dropzone_criteria_form_totalCriteriaColumn').val(totalColumn);
+                }
+            });
+
+            $('.remove-column').on('click', function() {
+                event.preventDefault();
+                if (totalColumn > 3) {
+                    console.log('remove');
+                    $('.column-container').children().last().remove();
+                    totalColumn--;
+
+                    $('#icap_dropzone_criteria_form_totalCriteriaColumn').val(totalColumn);
+                }
+            });
+        });
+    </script>
 {% endblock %}
