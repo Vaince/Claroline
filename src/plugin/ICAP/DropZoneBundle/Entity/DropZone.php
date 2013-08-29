@@ -20,6 +20,15 @@ use Doctrine\ORM\Mapping as ORM;
 class DropZone extends AbstractResource {
 
     /**
+     * 0 = common
+     * 1 = criteria
+     * 2 = participant
+     * 3 = finished
+     *
+     * @ORM\Column(name="edition_state", type="smallint", nullable=false)
+     */
+    protected $editionState = 0;
+    /**
      * @ORM\Column(type="text", nullable=true)
      */
     protected $instruction = null;
@@ -110,6 +119,22 @@ class DropZone extends AbstractResource {
     {
         $this->drops = new ArrayCollection();
         $this->peerReviewCriteria = new ArrayCollection();
+    }
+
+    /**
+     * @param mixed $editionState
+     */
+    public function setEditionState($editionState)
+    {
+        $this->editionState = $editionState;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getEditionState()
+    {
+        return $this->editionState;
     }
 
     /**

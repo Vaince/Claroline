@@ -9,13 +9,13 @@
                         {{ 'Common'|trans }}
                     </a>
                 </li>
-                <li class="active">
-                    <a href="{{ path('icap_dropzone_edit_criteria', {'resourceId': dropZone.id}) }}">
+                <li class="active {% if dropZone.editionState < 1 %}disabled{% endif %}">
+                    <a href="{% if dropZone.editionState < 1 %}#{% else %}{{ path('icap_dropzone_edit_criteria', {'resourceId': dropZone.id}) }}{% endif %}">
                         {{ 'Peer review criteria'|trans }}
                     </a>
                 </li>
-                <li class="disabled">
-                    <a href="#">
+                <li class="{% if dropZone.editionState < 2 %}disabled{% endif %}">
+                    <a href="{% if dropZone.editionState < 2 %}#{% else %}{{ path('icap_dropzone_edit_participant', {'resourceId': dropZone.id}) }}{% endif %}">
                         {{ 'Participant'|trans }}
                     </a>
                 </li>

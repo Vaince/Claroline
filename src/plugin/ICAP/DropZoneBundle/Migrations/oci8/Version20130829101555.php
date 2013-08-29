@@ -1,6 +1,6 @@
 <?php
 
-namespace ICAP\DropZoneBundle\Migrations\pdo_oci;
+namespace ICAP\DropZoneBundle\Migrations\oci8;
 
 use Doctrine\DBAL\Migrations\AbstractMigration;
 use Doctrine\DBAL\Schema\Schema;
@@ -8,9 +8,9 @@ use Doctrine\DBAL\Schema\Schema;
 /**
  * Auto-generated migration based on mapping information: modify it with caution
  *
- * Generation date: 2013/08/28 09:28:32
+ * Generation date: 2013/08/29 10:15:58
  */
-class Version20130828092826 extends AbstractMigration
+class Version20130829101555 extends AbstractMigration
 {
     public function up(Schema $schema)
     {
@@ -189,6 +189,7 @@ class Version20130828092826 extends AbstractMigration
         $this->addSql("
             CREATE TABLE icap__dropzonebundle_dropzone (
                 id NUMBER(10) NOT NULL, 
+                edition_state NUMBER(5) NOT NULL, 
                 instruction CLOB DEFAULT NULL, 
                 allow_workspace_resource NUMBER(1) NOT NULL, 
                 allow_upload NUMBER(1) NOT NULL, 

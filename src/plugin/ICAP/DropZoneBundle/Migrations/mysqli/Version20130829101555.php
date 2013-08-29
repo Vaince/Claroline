@@ -1,6 +1,6 @@
 <?php
 
-namespace ICAP\DropZoneBundle\Migrations\drizzle_pdo_mysql;
+namespace ICAP\DropZoneBundle\Migrations\mysqli;
 
 use Doctrine\DBAL\Migrations\AbstractMigration;
 use Doctrine\DBAL\Schema\Schema;
@@ -8,9 +8,9 @@ use Doctrine\DBAL\Schema\Schema;
 /**
  * Auto-generated migration based on mapping information: modify it with caution
  *
- * Generation date: 2013/08/28 09:28:33
+ * Generation date: 2013/08/29 10:15:58
  */
-class Version20130828092826 extends AbstractMigration
+class Version20130829101555 extends AbstractMigration
 {
     public function up(Schema $schema)
     {
@@ -18,24 +18,24 @@ class Version20130828092826 extends AbstractMigration
             CREATE TABLE icap__dropzonebundle_correction (
                 id INT AUTO_INCREMENT NOT NULL, 
                 user_id INT NOT NULL, 
-                total_grade INT DEFAULT NULL, 
-                comment TEXT DEFAULT NULL, 
-                valid BOOLEAN NOT NULL, 
+                total_grade SMALLINT DEFAULT NULL, 
+                comment LONGTEXT DEFAULT NULL, 
+                valid TINYINT(1) NOT NULL, 
                 start_date DATETIME NOT NULL, 
                 end_date DATETIME DEFAULT NULL, 
-                finished BOOLEAN NOT NULL, 
-                PRIMARY KEY(id), 
-                INDEX IDX_CDA81F40A76ED395 (user_id)
-            )
+                finished TINYINT(1) NOT NULL, 
+                INDEX IDX_CDA81F40A76ED395 (user_id), 
+                PRIMARY KEY(id)
+            ) DEFAULT CHARACTER SET utf8 COLLATE utf8_unicode_ci ENGINE = InnoDB
         ");
         $this->addSql("
             CREATE TABLE icap__dropzonebundle_criterion (
                 id INT AUTO_INCREMENT NOT NULL, 
                 drop_zone_id INT NOT NULL, 
-                instruction TEXT NOT NULL, 
-                PRIMARY KEY(id), 
-                INDEX IDX_F94B3BA7A8C6E7BD (drop_zone_id)
-            )
+                instruction LONGTEXT NOT NULL, 
+                INDEX IDX_F94B3BA7A8C6E7BD (drop_zone_id), 
+                PRIMARY KEY(id)
+            ) DEFAULT CHARACTER SET utf8 COLLATE utf8_unicode_ci ENGINE = InnoDB
         ");
         $this->addSql("
             CREATE TABLE icap__dropzonebundle_document (
@@ -44,10 +44,10 @@ class Version20130828092826 extends AbstractMigration
                 drop_id INT NOT NULL, 
                 url VARCHAR(255) DEFAULT NULL, 
                 path VARCHAR(255) DEFAULT NULL, 
-                PRIMARY KEY(id), 
                 INDEX IDX_744084241BAD783F (resource_node_id), 
-                INDEX IDX_744084244D224760 (drop_id)
-            )
+                INDEX IDX_744084244D224760 (drop_id), 
+                PRIMARY KEY(id)
+            ) DEFAULT CHARACTER SET utf8 COLLATE utf8_unicode_ci ENGINE = InnoDB
         ");
         $this->addSql("
             CREATE TABLE icap__dropzonebundle_drop (
@@ -55,48 +55,49 @@ class Version20130828092826 extends AbstractMigration
                 drop_zone_id INT NOT NULL, 
                 user_id INT NOT NULL, 
                 drop_date DATETIME NOT NULL, 
-                reported BOOLEAN NOT NULL, 
-                valid BOOLEAN NOT NULL, 
-                PRIMARY KEY(id), 
+                reported TINYINT(1) NOT NULL, 
+                valid TINYINT(1) NOT NULL, 
                 INDEX IDX_3AD19BA6A8C6E7BD (drop_zone_id), 
-                INDEX IDX_3AD19BA6A76ED395 (user_id)
-            )
+                INDEX IDX_3AD19BA6A76ED395 (user_id), 
+                PRIMARY KEY(id)
+            ) DEFAULT CHARACTER SET utf8 COLLATE utf8_unicode_ci ENGINE = InnoDB
         ");
         $this->addSql("
             CREATE TABLE icap__dropzonebundle_dropzone (
                 id INT AUTO_INCREMENT NOT NULL, 
-                instruction TEXT DEFAULT NULL, 
-                allow_workspace_resource BOOLEAN NOT NULL, 
-                allow_upload BOOLEAN NOT NULL, 
-                allow_url BOOLEAN NOT NULL, 
-                peer_review BOOLEAN NOT NULL, 
-                expected_total_correction INT NOT NULL, 
-                allow_drop_in_review BOOLEAN NOT NULL, 
-                display_notation_to_learners BOOLEAN NOT NULL, 
-                display_notation_message_to_learners BOOLEAN NOT NULL, 
-                minimum_score_to_pass INT NOT NULL, 
-                manual_planning BOOLEAN NOT NULL, 
+                edition_state SMALLINT NOT NULL, 
+                instruction LONGTEXT DEFAULT NULL, 
+                allow_workspace_resource TINYINT(1) NOT NULL, 
+                allow_upload TINYINT(1) NOT NULL, 
+                allow_url TINYINT(1) NOT NULL, 
+                peer_review TINYINT(1) NOT NULL, 
+                expected_total_correction SMALLINT NOT NULL, 
+                allow_drop_in_review TINYINT(1) NOT NULL, 
+                display_notation_to_learners TINYINT(1) NOT NULL, 
+                display_notation_message_to_learners TINYINT(1) NOT NULL, 
+                minimum_score_to_pass SMALLINT NOT NULL, 
+                manual_planning TINYINT(1) NOT NULL, 
                 manual_state VARCHAR(255) NOT NULL, 
                 start_allow_drop DATETIME DEFAULT NULL, 
                 end_allow_drop DATETIME DEFAULT NULL, 
                 end_review DATETIME DEFAULT NULL, 
-                allow_comment_in_correction BOOLEAN NOT NULL, 
-                total_criteria_column INT NOT NULL, 
+                allow_comment_in_correction TINYINT(1) NOT NULL, 
+                total_criteria_column SMALLINT NOT NULL, 
                 resourceNode_id INT DEFAULT NULL, 
-                PRIMARY KEY(id), 
-                UNIQUE INDEX UNIQ_6782FC23B87FAB32 (resourceNode_id)
-            )
+                UNIQUE INDEX UNIQ_6782FC23B87FAB32 (resourceNode_id), 
+                PRIMARY KEY(id)
+            ) DEFAULT CHARACTER SET utf8 COLLATE utf8_unicode_ci ENGINE = InnoDB
         ");
         $this->addSql("
             CREATE TABLE icap__dropzonebundle_grade (
                 id INT AUTO_INCREMENT NOT NULL, 
                 criterion_id INT NOT NULL, 
                 correction_id INT NOT NULL, 
-                `value` INT NOT NULL, 
-                PRIMARY KEY(id), 
+                value SMALLINT NOT NULL, 
                 INDEX IDX_B3C52D9397766307 (criterion_id), 
-                INDEX IDX_B3C52D9394AE086B (correction_id)
-            )
+                INDEX IDX_B3C52D9394AE086B (correction_id), 
+                PRIMARY KEY(id)
+            ) DEFAULT CHARACTER SET utf8 COLLATE utf8_unicode_ci ENGINE = InnoDB
         ");
         $this->addSql("
             ALTER TABLE icap__dropzonebundle_correction 

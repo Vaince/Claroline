@@ -10,12 +10,12 @@
                             {{ 'Common'|trans }}
                         </a>
                     </li>
-                    <li class="peer-review-options"{% if not dropZone.peerReview %}style="display: none;"{% endif %}>
+                    <li class="peer-review-options {% if dropZone.editionState < 1 %}disabled{% endif %}" {% if not dropZone.peerReview %}style="display: none;"{% endif %}>
                         <a href="{{ path('icap_dropzone_edit_criteria', {'resourceId': dropZone.id}) }}">
                             {{ 'Peer review criteria'|trans }}
                         </a>
                     </li>
-                    <li class="active">
+                    <li class="active {% if dropZone.editionState < 2 %}disabled{% endif %}">
                         <a href="{{ path('icap_dropzone_edit_participant', {'resourceId': dropZone.id}) }}">
                             {{ 'Participant'|trans }}
                         </a>

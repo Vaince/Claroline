@@ -140,6 +140,9 @@ class DropZoneController extends Controller {
             if (!$dropZone->getPeerReview() and $dropZone->getManualState() == 'peerReview') {
                 $dropZone->setManualState('notStarted');
             }
+            if ($dropZone->getEditionState() < 1) {
+                $dropZone->setEditionState(1);
+            }
 
             $em = $this->getDoctrine()->getManager();
             $em->persist($dropZone);
@@ -250,6 +253,9 @@ class DropZoneController extends Controller {
 
         if ($form->isValid()) {
             $dropZone = $form->getData();
+            if ($dropZone->getEditionState() < 2) {
+                $dropZone->setEditionState(2);
+            }
 
             $em = $this->getDoctrine()->getManager();
             $em->persist($dropZone);
