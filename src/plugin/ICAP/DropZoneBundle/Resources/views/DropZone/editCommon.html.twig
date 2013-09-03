@@ -1,5 +1,7 @@
 {% extends "ICAPDropZoneBundle:DropZone:edit.html.twig" %}
 
+{% form_theme form 'ClarolineCoreBundle::form_theme_bootstrap3.html.twig' %}
+
 {% block drop_zone_content_edit %}
     <div class="navbar navbar-default" role="navigation">
         <div class="collapse navbar-collapse navbar-ex1-collapse">
@@ -23,110 +25,43 @@
         </div>
     </div>
     <h3>{{ 'Common information'|trans }}</h3>
-    <form class="form-horizontal" role="form" method="POST" action="{{ path('icap_dropzone_update_common', {'resourceId': dropZone.id}) }}" {{ form_enctype(form) }}>
+    <form class="form-horizontal" role="form" method="POST" action="{{ path('icap_dropzone_edit_common', {'resourceId': dropZone.id}) }}" {{ form_enctype(form) }}>
+
         {{ form_errors(form) }}
 
         <h4>{{ 'Instruction'|trans }}</h4>
         <div class="form-group">
-            {{ form_errors(form.instruction) }}
-            <div class="col-lg-offset-2 col-lg-10">
-                {{ form_widget(form.instruction, {'attr': {'class': 'form-control'}}) }}
-            </div>
+            {{ form_row(form.instruction, {'label_attr': {'style': 'display: none;'}}) }}
         </div>
+
         <h4>{{ 'Document type allowed'|trans }}</h4>
+
         <div class="form-group">
-            <div class="col-lg-offset-2 col-lg-10">
-                {{ form_errors(form.allowWorkspaceResource) }}
-                <div class="checkbox">
-                    <label>
-                        {{ form_widget(form.allowWorkspaceResource) }} {{ 'icap_dropzone_common_form_allowWorkspaceResource'|trans }}
-                    </label>
-                </div>
-
-                {{ form_errors(form.allowUpload) }}
-                <div class="checkbox">
-                    <label>
-                        {{ form_widget(form.allowUpload) }} {{ 'icap_dropzone_common_form_allowUpload'|trans }}
-                    </label>
-                </div>
-
-                {{ form_errors(form.allowUrl) }}
-                <div class="checkbox">
-                    <label>
-                        {{ form_widget(form.allowUrl) }} {{ 'icap_dropzone_common_form_allowUrl'|trans }}
-                    </label>
-                </div>
-            </div>
+            {{ form_row(form.allowWorkspaceResource, {'input_col_size': 'col-lg-offset-2 col-lg-10', 'label_attr': {'class': 'control-label'}}) }}
+            {{ form_row(form.allowUpload, {'input_col_size': 'col-lg-offset-2 col-lg-10', 'label_attr': {'class': 'control-label'}}) }}
+            {{ form_row(form.allowUrl, {'input_col_size': 'col-lg-offset-2 col-lg-10', 'label_attr': {'class': 'control-label'}}) }}
         </div>
+
         <h4>{{ 'Type of evaluation'|trans }}</h4>
         <div class="form-group">
-            <div class="col-lg-offset-2 col-lg-10">
-                {{ form_errors(form.peerReview) }}
-                <div class="radio">
-                    <label>
-                        {{ 'icap_dropzone_common_form_StandardEvaluation'|trans }}
-                        {{ form_widget(form.peerReview.0) }}
-                    </label>
-                </div>
-                <div class="radio">
-                    <label>
-                        {{ 'icap_dropzone_common_form_PeerReviewEvaluation'|trans }}
-                        {{ form_widget(form.peerReview.1) }}
-                    </label>
-                </div>
+            {{ form_row(form.peerReview, {'label_attr': {'style': 'display: none;'}}) }}
 
-                <div class="col-lg-offset-1 row  peer-review-options" {% if not dropZone.peerReview %}style="display: none;"{% endif %}>
-                        <label style="font-weight: normal;">
-                            <div class="col-lg-2" style="padding-left: 0px; padding-right: 0px;">
-                                {{ form_widget(form.expectedTotalCorrection, {'attr': {'class': 'form-control', 'type': 'number'}}) }}
-                            </div>
-                            <div class="col-lg-10" style="padding-top: 8px; padding-left: 8px;">
-                                {{ form_errors(form.expectedTotalCorrection) }}
-                                {{ 'icap_dropzone_common_form_expectedTotalCorrection'|trans }}
-                            </div>
-                        </label>
-                </div>
-                <div class="col-lg-offset-1 peer-review-options" {% if not dropZone.peerReview %}style="display: none;"{% endif %}>
-                    <div class="checkbox">
-                        <label>
-                            {{ form_errors(form.allowDropInReview) }}
-                            {{ 'icap_dropzone_common_form_allowDropInReview'|trans }}
-                            {{ form_widget(form.allowDropInReview) }}
-                        </label>
-                    </div>
-                </div>
+            <div class="col-lg-offset-3 col-lg-9 peer-review-options">
+                {{ form_row(form.expectedTotalCorrection, {'type': 'number', 'input_col_size': 'col-lg-6', 'label_col_size': 'col-lg-6', 'attr': {'style': 'width: 60px;'}, 'label_attr': {'class': 'control-label', 'style': 'font-weight: normal;'}}) }}
+                {{ form_row(form.allowDropInReview, {'label_col_size': ' '}) }}
             </div>
         </div>
         <h4>{{ 'Rating'|trans }}</h4>
+
         <div class="form-group">
-            <div class="col-lg-offset-2 col-lg-10">
-                {{ form_errors(form.displayNotationToLearners) }}
-                <div class="checkbox">
-                    <label>
-                        {{ form_widget(form.displayNotationToLearners) }} {{ 'icap_dropzone_common_form_displayNotationToLearners'|trans }}
-                    </label>
-                </div>
-
-                {{ form_errors(form.displayNotationMessageToLearners) }}
-                <div class="checkbox">
-                    <label>
-                        {{ form_widget(form.displayNotationMessageToLearners) }} {{ 'icap_dropzone_common_form_displayNotationMessageToLearners'|trans }}
-                    </label>
-                </div>
-
-                <div class="col-lg-offset-1 row">
-                    <label style="font-weight: normal;">
-                        <div class="col-lg-2" style="padding-left: 0px; padding-right: 8px;">
-                            {{ form_widget(form.minimumScoreToPass, {'attr': {'class': 'form-control'}}) }}
-                        </div>
-                        <div class="col-lg-10" style="padding-top: 8px; padding-left: 0px;">
-                            {{ form_errors(form.minimumScoreToPass) }}
-                            {{ 'icap_dropzone_common_form_minimumScoreToPass'|trans }}
-                        </div>
-                    </label>
-                </div>
+            {{ form_row(form.displayNotationToLearners, {'input_col_size': 'col-lg-offset-2 col-lg-10', 'label_attr': {'class': 'control-label', 'style': 'font-weight: normal;'}}) }}
+            {{ form_row(form.displayNotationMessageToLearners, {'input_col_size': 'col-lg-offset-2 col-lg-10', 'label_attr': {'class': 'control-label', 'style': 'font-weight: normal;'}}) }}
+            <div class="col-lg-offset-3 col-lg-9">
+                {{ form_row(form.minimumScoreToPass, {'type': 'number', 'input_col_size': 'col-lg-6', 'label_col_size': 'col-lg-6', 'attr': {'style': 'width: 60px;'}, 'label_attr': {'class': 'control-label', 'style': 'font-weight: normal;'}}) }}
             </div>
         </div>
+
+
         <h4>{{ 'Planning'|trans }}</h4>
         {{ form_errors(form.manualPlanning) }}
         <div class="radio">
@@ -136,30 +71,7 @@
             </label>
         </div>
         <div class="form-group">
-            <div class="col-lg-offset-2 col-lg-10">
-                {{ form_errors(form.manualState) }}
-
-                <div class="radio">
-                    <label>
-                        {{ 'manualStateNotStarted'|trans }}
-                        {{ form_widget(form.manualState.0) }}
-                    </label>
-                </div>
-
-                <div class="radio">
-                    <label>
-                        {{ 'allowDropManualState'|trans }}
-                        {{ form_widget(form.manualState.1) }}
-                    </label>
-                </div>
-
-                <div class="radio required peer-review-options" for="icap_dropzone_common_form_manualState_2" {% if not dropZone.peerReview %}style="display: none;"{% endif %}>
-                    <label>
-                        {{ 'peerReviewManualState'|trans }}
-                        {{ form_widget(form.manualState.2, {'attr': {'class': 'peer-review-options'}}) }}
-                    </label>
-                </div>
-            </div>
+            {{ form_row(form.manualState, {'label_attr': {'style': 'display: none;'}}) }}
         </div>
 
         <label class="radio">
@@ -168,32 +80,18 @@
         </label>
 
         <div class="form-group">
-            {{ form_errors(form.startAllowDrop) }}
-            <label for="icap_dropzone_common_form_startAllowDrop" class="col-lg-2 control-label">
-                {{ 'icap_dropzone_common_form_startAllowDrop'|trans }}
-            </label>
-            <div class="col-lg-10">
-                {{ form_widget(form.startAllowDrop, {'attr': {'class': 'form-control'}}) }}
+            <div class="row col-lg-offset-2">
+                {{ form_row(form.startAllowDrop, {'label_attr': {'class': 'control-label', 'style': 'font-weight: normal;'}}) }}
             </div>
         </div>
-
         <div class="form-group">
-            {{ form_errors(form.endAllowDrop) }}
-            <label for="icap_dropzone_common_form_endAllowDrop" class="col-lg-2 control-label">
-                {{ 'icap_dropzone_common_form_endAllowDrop'|trans }}
-            </label>
-            <div class="col-lg-10">
-                {{ form_widget(form.endAllowDrop, {'attr': {'class': 'form-control'}}) }}
+            <div class="row col-lg-offset-2">
+                {{ form_row(form.endAllowDrop, {'label_attr': {'class': 'control-label', 'style': 'font-weight: normal;'}}) }}
             </div>
         </div>
-
-        <div class="form-group peer-review-options" {% if not dropZone.peerReview %}style="display: none;"{% endif %}>
-            {{ form_errors(form.endReview) }}
-            <label for="icap_dropzone_common_form_endReview" class="col-lg-2 control-label">
-                {{ 'icap_dropzone_common_form_endReview'|trans }}
-            </label>
-            <div class="col-lg-10">
-                {{ form_widget(form.endReview, {'attr': {'class': 'form-control'}}) }}
+        <div class="form-group">
+            <div class="row col-lg-offset-2 peer-review-options">
+                {{ form_row(form.endReview, {'label_attr': {'class': 'control-label', 'style': 'font-weight: normal;'}}) }}
             </div>
         </div>
 
@@ -201,7 +99,8 @@
             <a href="{{ path('claro_workspace_open_tool', {'workspaceId': workspace.getId(), 'toolName': 'resource_manager'}) }}" class="btn btn-default">{{ 'Cancel'|trans }}</a>
             <button type= "submit" class="btn btn-primary">{{ 'Save and continue'|trans }}</button>
         </div>
-    {{ form_end(form) }}
+        {{ form_rest(form) }}
+    </form>
 {% endblock %}
 
 {% block javascripts %}
@@ -209,11 +108,40 @@
     <script>
         $('document').ready(function() {
             $('#icap_dropzone_common_form_peerReview_0').on('click', function() {
-                $('.peer-review-options').hide();
+                enablePeerReviewOptions(false);
             });
             $('#icap_dropzone_common_form_peerReview_1').on('click', function() {
-                $('.peer-review-options').show();
+                enablePeerReviewOptions(true);
             });
+
+            var enablePeerReviewOptions = function (peerReviewEnabled) {
+                if (peerReviewEnabled) {
+                    $('.peer-review-options').show();
+                    $('#icap_dropzone_common_form_manualState_2').parent().show();
+                } else {
+                    $('.peer-review-options').hide();
+                    $('#icap_dropzone_common_form_manualState_2').parent().hide();
+
+                    if ($('#icap_dropzone_common_form_expectedTotalCorrection').val() < 1 || $('#icap_dropzone_common_form_expectedTotalCorrection').val() > 10) {
+                        $('#icap_dropzone_common_form_expectedTotalCorrection').val(3);
+                    }
+
+                    $('#icap_dropzone_common_form_endReview_date').val(null);
+                    $('#icap_dropzone_common_form_endReview_time').val(null);
+                }
+            }
+
+            enablePeerReviewOptions({{ dropZone.peerReview }});
         });
     </script>
+{% endblock %}
+
+{% block stylesheets %}
+    {{ parent() }}}
+    <style>
+        .form-control.time {
+            width: 50px;
+            display: inline;
+        }
+    </style>
 {% endblock %}

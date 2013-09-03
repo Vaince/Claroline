@@ -6,11 +6,54 @@
 {% block dropzone_content %}
     <div class="container container-dropzone">
         <header>
-            <div class="pull-right">
-                <a href="{{ path('icap_dropzone_edit', {'resourceId': dropZone.id}) }}">Edit</a>
-            </div>
+            <a href="{{ path('icap_dropzone_edit', {'resourceId': dropZone.id}) }}">Edit</a>
         </header>
-        Open
+        <h2>Open drop zone</h2>
+
+        <p class="text-muted">
+            {% if dropZone.manualPlanning %}
+                manual - {{ dropZone.currentState }}
+            {% else %}
+                {% if dropZone.currentState == 'notStarted' %}
+                    Start {{ dropZone.startAllowDrop|date('d/m/Y h:i') }}
+                {% elseif dropZone.currentState == 'allowDrop' %}
+                    From {{ dropZone.startAllowDrop|date('d/m/Y h:i') }}
+                    {%  if dropZone.peerReview and dropZone.allowDropInReview %}
+                        to {{ dropZone.endReview|date('d/m/Y h:i') }}
+                    {% else %}
+                        to {{ dropZone.endAllowDrop|date('d/m/Y h:i') }}
+                    {% endif %}
+                {% elseif dropZone.currentState == 'peerReview' %}
+                    From {{ dropZone.startAllowDrop|date('d/m/Y h:i') }}
+                    to {{ dropZone.endReview|date('d/m/Y h:i') }}
+                {% endif %}
+            {% endif %}
+        </p>
+
+        <p class="text-danger">
+            {{ dropZone.currentState }}
+        </p>
+
+        <p class="text-muted">
+            Instruction :
+        </p>
+        <p>
+            {{ dropZone.instruction }}
+        </p>
+
+        {% if dropZone.currentState == 'allowDrop' or (dropZone.currentState == 'peerReview' and dropZone.allowDropInReview) %}
+            <div>
+                <a href="#" class="btn btn-primary pull-right">Deposit documents</a>
+            </div>
+
+            drop
+            {% if drop is not null %}
+            {% else %}
+                <p class="text-muted">
+                    No deposit for your account
+                </p>
+            {% endif %}
+        {% endif %}
     </div>
 {% endblock %}
 

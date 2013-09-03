@@ -9,9 +9,11 @@ namespace ICAP\DropZoneBundle\Controller;
 
 use Claroline\CoreBundle\Library\Resource\ResourceCollection;
 use ICAP\DropZoneBundle\Entity\Criterion;
+use ICAP\DropZoneBundle\Entity\Drop;
 use ICAP\DropZoneBundle\Entity\DropZone;
 use ICAP\DropZoneBundle\Form\CriterionDeleteType;
 use ICAP\DropZoneBundle\Form\CriterionType;
+use ICAP\DropZoneBundle\Form\DropType;
 use ICAP\DropZoneBundle\Form\DropZoneCommonType;
 use ICAP\DropZoneBundle\Form\DropZoneCriteriaType;
 use Pagerfanta\Adapter\DoctrineORMAdapter;
@@ -22,6 +24,7 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
+use Symfony\Component\Form\FormError;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 
@@ -107,60 +110,80 @@ class DropZoneController extends Controller {
         $this->isAllowToOpen($dropZone);
         $this->isAllowToEdit($dropZone);
 
-        $form = $this->container->get('form.factory')->create(new DropZoneCommonType(), $dropZone);
+//        $dropZone->setName($dropZone->getResourceNode()->getName());
 
-        return array(
-            'workspace' => $dropZone->getResourceNode()->getWorkspace(),
-            'dropZone' => $dropZone,
-            'pathArray' => $dropZone->getPathArray(),
-            'form' => $form->createView()
-        );
-    }
+        $form = $this->createForm(new DropZoneCommonType(), $dropZone);//, array('language' => $this->container->getParameter('locale')));
 
-    /**
-     * @Route(
-     *      "/{resourceId}/update/common",
-     *      name="icap_dropzone_update_common",
-     *      requirements={"resourceId" = "\d+"}
-     * )
-     * @ParamConverter("dropZone", class="ICAPDropZoneBundle:DropZone", options={"id" = "resourceId"})
-     * @Template("ICAPDropZoneBundle:DropZone:editCommon.html.twig")
-     */
-    public function updateCommonAction($dropZone)
-    {
-        $this->isAllowToOpen($dropZone);
-        $this->isAllowToEdit($dropZone);
+        if ($this->getRequest()->isMethod('POST')) {
+            $form->handleRequest($this->getRequest());
 
-        $form = $this->createForm(new DropZoneCommonType(), $dropZone);
-        $form->handleRequest($this->getRequest());
-
-        if ($form->isValid()) {
             $dropZone = $form->getData();
 
             if (!$dropZone->getPeerReview() and $dropZone->getManualState() == 'peerReview') {
                 $dropZone->setManualState('notStarted');
             }
-            if ($dropZone->getEditionState() < 1) {
-                $dropZone->setEditionState(1);
+            if ($dropZone->getEditionState() < 2) {
+                $dropZone->setEditionState(2);
             }
 
-            $em = $this->getDoctrine()->getManager();
-            $em->persist($dropZone);
-            $em->flush();
-
-            $destination = 'icap_dropzone_edit_participant';
-            if ($dropZone->getPeerReview()) {
-                   $destination = 'icap_dropzone_edit_criteria';
+            if (!$dropZone->getDisplayNotationToLearners() and ! $dropZone->getDisplayNotationMessageToLearners()) {
+                $form->get('displayNotationToLearners')->addError(new FormError('Choose at least one type of ranking'));
+                $form->get('displayNotationMessageToLearners')->addError(new FormError('Choose at least one type of ranking'));
             }
 
-            return $this->redirect(
-                $this->generateUrl(
-                    $destination,
-                    array(
-                        'resourceId' => $dropZone->getId()
+            if (!$dropZone->getAllowWorkspaceResource() and !$dropZone->getAllowUpload() and !$dropZone->getAllowUrl()) {
+                $form->get('allowWorkspaceResource')->addError(new FormError('Choose at least one type of document'));
+                $form->get('allowUpload')->addError(new FormError('Choose at least one type of document'));
+                $form->get('allowUrl')->addError(new FormError('Choose at least one type of document'));
+            }
+
+            if (!$dropZone->getManualPlanning()) {
+                if ($dropZone->getStartAllowDrop() === null) {
+                    $form->get('startAllowDrop')->addError(new FormError('Choose a date'));
+                }
+                if ($dropZone->getEndAllowDrop() === null) {
+                    $form->get('endAllowDrop')->addError(new FormError('Choose a date'));
+                }
+                if ($dropZone->getPeerReview() && $dropZone->getEndReview() === null) {
+                    $form->get('endReview')->addError(new FormError('Choose a date'));
+                }
+                if ($dropZone->getStartAllowDrop() !== null && $dropZone->getEndAllowDrop() !== null) {
+                    if ($dropZone->getStartAllowDrop()->getTimestamp() > $dropZone->getEndAllowDrop()->getTimestamp()) {
+                        $form->get('startAllowDrop')->addError(new FormError('Must be before end allow drop'));
+                        $form->get('endAllowDrop')->addError(new FormError('Must be after start allow drop'));
+                    }
+                }
+                if ($dropZone->getEndAllowDrop() !== null && $dropZone->getEndReview() !== null) {
+                    if ($dropZone->getEndAllowDrop()->getTimestamp() > $dropZone->getEndReview()->getTimestamp()) {
+                        $form->get('endAllowDrop')->addError(new FormError('Must be before end peer review'));
+                        $form->get('endReview')->addError(new FormError('Must be after end allow drop'));
+                    }
+                }
+            }
+
+            if ($form->isValid()) {
+                $em = $this->getDoctrine()->getManager();
+                $em->persist($dropZone);
+                $em->flush();
+
+                $destination = 'icap_dropzone_edit_participant';
+                if ($dropZone->getPeerReview()) {
+                    $destination = 'icap_dropzone_edit_criteria';
+                }
+
+                return $this->redirect(
+                    $this->generateUrl(
+                        $destination,
+                        array(
+                            'resourceId' => $dropZone->getId()
+                        )
                     )
-                )
-            );
+                );
+            } else {
+//                echo('<pre>');
+//                var_dump($form->getErrors());
+//                echo('</pre>');
+            }
         }
 
         return array(
@@ -169,8 +192,8 @@ class DropZoneController extends Controller {
             'pathArray' => $dropZone->getPathArray(),
             'form' => $form->createView()
         );
-    }
 
+    }
 
     /**
      * @Route(
@@ -193,8 +216,6 @@ class DropZoneController extends Controller {
     {
         $this->isAllowToOpen($dropZone);
         $this->isAllowToEdit($dropZone);
-
-        $form = $this->createForm(new DropZoneCriteriaType(), $dropZone);
 
         $em = $this->getDoctrine()->getManager();
         $repository = $em->getRepository('ICAPDropZoneBundle:Criterion');
@@ -225,57 +246,37 @@ class DropZoneController extends Controller {
             }
         }
 
-        return array(
-            'workspace' => $dropZone->getResourceNode()->getWorkspace(),
-            'dropZone' => $dropZone,
-            'pathArray' => $dropZone->getPathArray(),
-            'pager' => $pager,
-            'form' => $form->createView()
-        );
-    }
-
-    /**
-     * @Route(
-     *      "/{resourceId}/update/criteria",
-     *      name="icap_dropzone_update_criteria",
-     *      requirements={"resourceId" = "\d+"}
-     * )
-     * @ParamConverter("dropZone", class="ICAPDropZoneBundle:DropZone", options={"id" = "resourceId"})
-     * @Template("ICAPDropZoneBundle:DropZone:editCriteria.html.twig")
-     */
-    public function updateCriteriaAction($dropZone)
-    {
-        $this->isAllowToOpen($dropZone);
-        $this->isAllowToEdit($dropZone);
-
         $form = $this->createForm(new DropZoneCriteriaType(), $dropZone);
-        $form->handleRequest($this->getRequest());
 
-        if ($form->isValid()) {
-            $dropZone = $form->getData();
-            if ($dropZone->getEditionState() < 2) {
-                $dropZone->setEditionState(2);
-            }
+        if ($this->getRequest()->isMethod('POST')) {
+            $form->handleRequest($this->getRequest());
 
-            $em = $this->getDoctrine()->getManager();
-            $em->persist($dropZone);
-            $em->flush();
+            if ($form->isValid()) {
+                $dropZone = $form->getData();
+                if ($dropZone->getEditionState() < 3) {
+                    $dropZone->setEditionState(3);
+                }
 
-            return $this->redirect(
-                $this->generateUrl(
-                    'icap_dropzone_edit_participant',
-                    array(
-                        'resourceId' => $dropZone->getId()
+                $em = $this->getDoctrine()->getManager();
+                $em->persist($dropZone);
+                $em->flush();
+
+                return $this->redirect(
+                    $this->generateUrl(
+                        'icap_dropzone_edit_participant',
+                        array(
+                            'resourceId' => $dropZone->getId()
+                        )
                     )
-                )
-            );
+                );
+            }
         }
 
         return array(
             'workspace' => $dropZone->getResourceNode()->getWorkspace(),
             'dropZone' => $dropZone,
             'pathArray' => $dropZone->getPathArray(),
-            'criteria' => $dropZone->getPeerReviewCriteria(),
+            'pager' => $pager,
             'form' => $form->createView()
         );
     }
@@ -500,6 +501,48 @@ class DropZoneController extends Controller {
             'workspace' => $dropZone->getResourceNode()->getWorkspace(),
             'dropZone' => $dropZone,
             'pathArray' => $dropZone->getPathArray(),
+        );
+    }
+
+    /**
+     * @Route(
+     *      "/{resourceId}/drop",
+     *      name="icap_dropzone_drop",
+     *      requirements={"resourceId" = "\d+"}
+     * )
+     * @ParamConverter("dropZone", class="ICAPDropZoneBundle:DropZone", options={"id" = "resourceId"})
+     * @ParamConverter("user", options={"authenticatedUser" = true})
+     * @Template()
+     */
+    public function dropAction($dropZone, $user)
+    {
+        $this->isAllowToOpen($dropZone);
+
+        $em = $this->getDoctrine()->getManager();
+        $dropRepo = $em->getRepository('ICAPDropZoneBundle:Drop');
+
+        if ($dropRepo->findOneBy(array('dropZone' => $dropZone, 'user' => $user, 'finished' => true)) !== null) {
+            //TODO throw error
+        }
+
+        $notFinishedDrop = $dropRepo->findOneBy(array('dropZone' => $dropZone, 'user' => $user, 'finished' => false));
+        if ($notFinishedDrop === null) {
+            $notFinishedDrop = new Drop();
+            $notFinishedDrop->setUser($user);
+            $notFinishedDrop->setDropZone($dropZone);
+            $notFinishedDrop->setFinished(false);
+
+            $em->persist($notFinishedDrop);
+            $em->flush();
+        }
+
+        $form = $this->createForm(new DropType(), $notFinishedDrop);
+
+        return array(
+            'workspace' => $dropZone->getResourceNode()->getWorkspace(),
+            'dropZone' => $dropZone,
+            'pathArray' => $dropZone->getPathArray(),
+            'form' => $form->createView(),
         );
     }
 }

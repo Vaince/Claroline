@@ -1,5 +1,7 @@
 {% extends "ICAPDropZoneBundle:DropZone:edit.html.twig" %}
 
+{% form_theme form 'ClarolineCoreBundle::form_theme_bootstrap3.html.twig' %}
+
 {% block drop_zone_content_edit %}
     <div class="navbar navbar-default" role="navigation">
         <div class="collapse navbar-collapse navbar-ex1-collapse">
@@ -25,7 +27,7 @@
     <h3>{{ 'Evaluation Criteria'|trans }}</h3>
 
     <div class="container">
-        <form class="form-horizontal" method="POST" action="{{ path('icap_dropzone_update_criteria', {'resourceId': dropZone.id}) }}">
+        <form class="form-horizontal" method="POST" action="{{ path('icap_dropzone_edit_criteria', {'resourceId': dropZone.id}) }}">
             <div class="row">
                 <br/>
 
@@ -51,13 +53,7 @@
                 </div>
 
                 <div class="form-group column-input">
-                    {{ form_errors(form.totalCriteriaColumn) }}
-                    <label for="icap_dropzone_criteria_form_totalCriteriaColumn" class="col-md-3 control-label">
-                        {{ 'icap_dropzone_criteria_form_totalCriteriaColumn'|trans }}
-                    </label>
-                    <div class="col-md-2">
-                        {{ form_widget(form.totalCriteriaColumn, {'attr': {'class': 'form-control'}}) }}
-                    </div>
+                    {{ form_row(form.totalCriteriaColumn, {'type': 'number', 'label_col_size': 'col-md-3', 'input_col_size': 'col-md-9', 'label_attr': {'style': 'font-weight: normal;'}, 'attr': {'class': 'form-control', 'style': 'width: 60px;'}}) }}
                 </div>
             </div>
 
@@ -116,11 +112,8 @@
             </div>
 
             <div class="row">
-                {{ form_errors(form.allowCommentInCorrection) }}
-                <div class="checkbox pull-right">
-                    <label>
-                        {{ form_widget(form.allowCommentInCorrection) }} {{ 'icap_dropzone_criteria_form_allowCommentInCorrection'|trans }}
-                    </label>
+                <div class="pull-right">
+                    {{ form_row(form.allowCommentInCorrection, {'input_col_size': ' '}) }}
                 </div>
             </div>
 

@@ -36,6 +36,10 @@ class Drop {
      */
     protected $valid = true;
     /**
+     * @ORM\Column(type="boolean", nullable=false)
+     */
+    protected $finished = false;
+    /**
      * @ORM\ManyToOne(
      *      targetEntity="ICAP\DropZoneBundle\Entity\DropZone",
      *      inversedBy="drops"
@@ -167,5 +171,21 @@ class Drop {
     public function setValid($valid)
     {
         $this->valid = $valid;
+    }
+
+    /**
+     * @param mixed $finished
+     */
+    public function setFinished($finished)
+    {
+        $this->finished = $finished;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getFinished()
+    {
+        return $this->finished;
     }
 }

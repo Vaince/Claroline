@@ -20,15 +20,16 @@ use Doctrine\ORM\Mapping as ORM;
 class DropZone extends AbstractResource {
 
     /**
-     * 0 = common
-     * 1 = criteria
-     * 2 = participant
-     * 3 = finished
+     * 1 = common
+     * 2 = criteria
+     * 3 = participant
+     * 4 = finished
      *
      * @ORM\Column(name="edition_state", type="smallint", nullable=false)
      */
-    protected $editionState = 0;
+    protected $editionState = 1;
     /**
+     * @Assert\NotBlank()
      * @ORM\Column(type="text", nullable=true)
      */
     protected $instruction = null;
@@ -50,6 +51,8 @@ class DropZone extends AbstractResource {
     protected $peerReview = false;
     /**
      * @ORM\Column(name="expected_total_correction", type="smallint", nullable=false)
+     * @Assert\LessThanOrEqual(value=10)
+     * @Assert\GreaterThanOrEqual(value=1)
      */
     protected $expectedTotalCorrection = 3;
     /**
@@ -66,6 +69,8 @@ class DropZone extends AbstractResource {
     protected $displayNotationMessageToLearners = false;
     /**
      * @ORM\Column(name="minimum_score_to_pass", type="smallint", nullable=false)
+     * @Assert\LessThanOrEqual(value=20)
+     * @Assert\GreaterThanOrEqual(value=0)
      */
     protected $minimumScoreToPass = 10;
     /**
@@ -94,6 +99,8 @@ class DropZone extends AbstractResource {
     protected $allowCommentInCorrection = false;
     /**
      * @ORM\Column(name="total_criteria_column", type="smallint", nullable=false)
+     * @Assert\LessThanOrEqual(value=10)
+     * @Assert\GreaterThanOrEqual(value=3)
      */
     protected $totalCriteriaColumn = 5;
     /**
@@ -456,5 +463,24 @@ class DropZone extends AbstractResource {
         }
 
         return $pathArray;
+    }
+
+    public function getCurrentState()
+    {
+        if ($this->manualPlanning) {
+            return $this->manualState;
+        } else {
+            $now = new \DateTime();
+
+            if ($now->getTimestamp() < $this->startAllowDrop->getTimestamp()) {
+                return 'notStarted';
+            } else if ($now->getTimestamp() < $this->endAllowDrop->getTimestamp()) {
+                return 'allowDrop';
+            } else if ($this->peerReview and $now->getTimestamp() < $this->endReview->getTimestamp()) {
+                return 'peerReview';
+            } else {
+                return 'finished';
+            }
+        }
     }
 }

@@ -8,9 +8,9 @@ use Doctrine\DBAL\Schema\Schema;
 /**
  * Auto-generated migration based on mapping information: modify it with caution
  *
- * Generation date: 2013/08/29 10:15:57
+ * Generation date: 2013/09/03 09:38:18
  */
-class Version20130829101555 extends AbstractMigration
+class Version20130903093816 extends AbstractMigration
 {
     public function up(Schema $schema)
     {
@@ -149,6 +149,7 @@ class Version20130829101555 extends AbstractMigration
                 drop_date TIMESTAMP(0) NOT NULL, 
                 reported NUMBER(1) NOT NULL, 
                 valid NUMBER(1) NOT NULL, 
+                finished NUMBER(1) NOT NULL, 
                 PRIMARY KEY(id)
             )
         ");

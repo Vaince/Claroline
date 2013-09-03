@@ -1,0 +1,15 @@
+{{% extends "ICAPDropZoneBundle::layout.html.twig" %}
+{% block dropzone_breadcrumb %}
+    <li class="active"><span class="glyphicon icon-file"></span> {{ dropZone.resourceNode.name }}</li>
+{% endblock %}
+
+{% block drop_zone_content %}
+    <h3>
+        {{ 'Drop'|trans }}
+    </h3>
+    {% include "ICAPDropZoneBundle:DropZone:dropForm.html.twig" %}
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}}
+{% endblock %}
