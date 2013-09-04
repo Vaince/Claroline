@@ -27,7 +27,6 @@ class DropZoneCommonType extends AbstractType
                 'multiple' => false
             ))
             ->add('expectedTotalCorrection', 'number', array('required' => true))
-            ->add('allowDropInReview', 'checkbox', array('required' => false))
 
             ->add('displayNotationToLearners', 'checkbox', array('required' => false))
             ->add('displayNotationMessageToLearners', 'checkbox', array('required' => false))
@@ -45,26 +44,19 @@ class DropZoneCommonType extends AbstractType
 
             ->add('manualState', 'choice', array(
                 'choices' => array(
-                    'notStarted' => 'manualStateNotStarted',
+                    'notStarted' => 'notStartedManualState',
                     'allowDrop' => 'allowDropManualState',
                     'peerReview' => 'peerReviewManualState',
-                    'finished' => 'peerReviewManualState',
+                    'finished' => 'finishedManualState',
                 ),
                 'expanded' => true,
                 'multiple' => false
             ))
 
-//            ->add('startAllowDrop', 'text', array('required' => false))
-//            ->add('endAllowDrop', 'text', array('required' => false))
-//            ->add('endReview', 'text', array('required' => false))
-
             ->add('startAllowDrop', 'datetime', array('date_widget' => 'single_text', 'time_widget' => 'single_text', 'with_seconds' => false, 'required' => false))
             ->add('endAllowDrop', 'datetime', array('date_widget' => 'single_text', 'time_widget' => 'single_text', 'with_seconds' => false, 'required' => false))
-            ->add('endReview', 'datetime', array('date_widget' => 'single_text', 'time_widget' => 'single_text', 'with_seconds' => false, 'required' => false))
-//            ->add('startAllowDrop', 'datetimepicker', array('required' => false, 'time_widget' => 'single_text', 'with_seconds' => false, 'language' => $options['language']))
-//            ->add('endAllowDrop', 'datetimepicker', array('required' => false, 'language' => $options['language']))
-//            ->add('endReview', 'datetimepicker', array('required' => false, 'language' => $options['language']))
-        ;
+            ->add('startReview', 'datetime', array('date_widget' => 'single_text', 'time_widget' => 'single_text', 'with_seconds' => false, 'required' => false))
+            ->add('endReview', 'datetime', array('date_widget' => 'single_text', 'time_widget' => 'single_text', 'with_seconds' => false, 'required' => false));
     }
 
     public function getName()
@@ -76,7 +68,7 @@ class DropZoneCommonType extends AbstractType
     {
         $resolver->setDefaults(
             array(
-                'language'           => 'en'
+                'language' => 'en'
             )
         );
     }

@@ -2,9 +2,8 @@ $(document).ready(function () {
     'use strict';
 
     var modalNewForm = null;
-
-    var addLink = $('a.launch-modal');
-    addLink.on('click', function (event) {
+-
+    $('a.launch-modal').on('click', function (event) {
         event.preventDefault();
 
         $.get($(this).attr('href'))
@@ -14,6 +13,7 @@ $(document).ready(function () {
                 }
             })
             .done(function (data) {
+                console.log(data);
                 $('body').append(data);
                 modalNewForm = $('#modal-content');
                 modalNewForm.modal('show');

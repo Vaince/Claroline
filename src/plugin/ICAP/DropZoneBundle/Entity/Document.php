@@ -51,6 +51,14 @@ class Document {
     }
 
     /**
+     * @param mixed
+     */
+    public function setId($id)
+    {
+        $this->id = $id;
+    }
+
+    /**
      * @return mixed
      */
     public function getPath()
@@ -98,5 +106,19 @@ class Document {
         $this->url = $url;
     }
 
+    /**
+     * @param mixed $drop
+     */
+    public function setDrop($drop)
+    {
+        $this->drop = $drop;
+    }
 
+    /**
+     * @return mixed
+     */
+    public function getDrop()
+    {
+        return $this->drop;
+    }
 }

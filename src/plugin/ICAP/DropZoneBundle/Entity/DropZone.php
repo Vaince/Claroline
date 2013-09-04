@@ -29,7 +29,6 @@ class DropZone extends AbstractResource {
      */
     protected $editionState = 1;
     /**
-     * @Assert\NotBlank()
      * @ORM\Column(type="text", nullable=true)
      */
     protected $instruction = null;
@@ -55,10 +54,6 @@ class DropZone extends AbstractResource {
      * @Assert\GreaterThanOrEqual(value=1)
      */
     protected $expectedTotalCorrection = 3;
-    /**
-     * @ORM\Column(name="allow_drop_in_review", type="boolean", nullable=false)
-     */
-    protected $allowDropInReview = false;
     /**
      * @ORM\Column(name="display_notation_to_learners", type="boolean", nullable=false)
      */
@@ -89,6 +84,10 @@ class DropZone extends AbstractResource {
      * @ORM\Column(name="end_allow_drop", type="datetime", nullable=true)
      */
     protected $endAllowDrop = null;
+    /**
+     * @ORM\Column(name="start_review", type="datetime", nullable=true)
+     */
+    protected $startReview = null;
     /**
      * @ORM\Column(name="end_review", type="datetime", nullable=true)
      */
@@ -448,6 +447,22 @@ class DropZone extends AbstractResource {
         $this->minimumScoreToPass = $minimumScoreToPass;
     }
 
+    /**
+     * @param mixed $startReview
+     */
+    public function setStartReview($startReview)
+    {
+        $this->startReview = $startReview;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getStartReview()
+    {
+        return $this->startReview;
+    }
+
     public function getPathArray()
     {
         $path = $this->getResourceNode()->getPath();
@@ -465,22 +480,47 @@ class DropZone extends AbstractResource {
         return $pathArray;
     }
 
-    public function getCurrentState()
+    public function isNotStarted()
     {
         if ($this->manualPlanning) {
-            return $this->manualState;
+            return $this->manualState == 'notStarted';
         } else {
             $now = new \DateTime();
 
-            if ($now->getTimestamp() < $this->startAllowDrop->getTimestamp()) {
-                return 'notStarted';
-            } else if ($now->getTimestamp() < $this->endAllowDrop->getTimestamp()) {
-                return 'allowDrop';
-            } else if ($this->peerReview and $now->getTimestamp() < $this->endReview->getTimestamp()) {
-                return 'peerReview';
-            } else {
-                return 'finished';
-            }
+            return $now->getTimestamp() < $this->startAllowDrop->getTimestamp() and $now->getTimestamp() < $this->startReview->getTimestamp();
+        }
+    }
+
+    public function isAllowDrop()
+    {
+        if ($this->manualPlanning) {
+            return $this->manualState == 'allowDrop';
+        } else {
+            $now = new \DateTime();
+
+            return $now->getTimestamp() >= $this->startAllowDrop->getTimestamp() and $now->getTimestamp() < $this->endAllowDrop->getTimestamp();
+        }
+    }
+
+    public function isPeerReview()
+    {
+        if ($this->manualPlanning) {
+            return $this->manualState == 'peerReview';
+        } else {
+            $now = new \DateTime();
+
+            return $now->getTimestamp() >= $this->startReview->getTimestamp() and $now->getTimestamp() < $this->endReview->getTimestamp();
+        }
+    }
+
+    public function isFinished()
+    {
+        if ($this->manualPlanning) {
+            return $this->manualState == 'finished';
+        } else {
+            $now = new \DateTime();
+
+            return $now->getTimestamp() > $this->endAllowDrop->getTimestamp() and $now->getTimestamp() > $this->endReview->getTimestamp();
         }
     }
 }

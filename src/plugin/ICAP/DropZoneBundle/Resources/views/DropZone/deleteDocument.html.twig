@@ -4,11 +4,12 @@
 {% endblock %}
 
 {% block dropzone_content %}
-    <h3>
-        {{ 'Drop'|trans }}
-    </h3>
-    {% include "ICAPDropZoneBundle:DropZone:dropForm.html.twig" %}
-
+    <div class="container">
+        <h3>
+            {{ 'Delete a document'|trans }}
+        </h3>
+        {% include "ICAPDropZoneBundle:DropZone:deleteDocumentForm.html.twig" %}
+    </div>
 {% endblock %}
 
 {% block javascripts %}

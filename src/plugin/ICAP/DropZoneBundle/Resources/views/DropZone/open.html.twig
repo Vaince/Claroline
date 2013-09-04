@@ -10,47 +10,64 @@
         </header>
         <h2>Open drop zone</h2>
 
-        <p class="text-muted">
-            {% if dropZone.manualPlanning %}
-                manual - {{ dropZone.currentState }}
-            {% else %}
-                {% if dropZone.currentState == 'notStarted' %}
-                    Start {{ dropZone.startAllowDrop|date('d/m/Y h:i') }}
-                {% elseif dropZone.currentState == 'allowDrop' %}
-                    From {{ dropZone.startAllowDrop|date('d/m/Y h:i') }}
-                    {%  if dropZone.peerReview and dropZone.allowDropInReview %}
-                        to {{ dropZone.endReview|date('d/m/Y h:i') }}
-                    {% else %}
-                        to {{ dropZone.endAllowDrop|date('d/m/Y h:i') }}
-                    {% endif %}
-                {% elseif dropZone.currentState == 'peerReview' %}
-                    From {{ dropZone.startAllowDrop|date('d/m/Y h:i') }}
-                    to {{ dropZone.endReview|date('d/m/Y h:i') }}
-                {% endif %}
+            {% if dropZone.isNotStarted %}
+                <p class="text-danger">
+                    {{ 'notStarted'|trans }} {% if not dropZone.manualPlanning %} - Start {{ dropZone.startAllowDrop|date('formatDatetime'|trans) }} {% endif %}
+                </p>
             {% endif %}
-        </p>
+            {% if dropZone.isAllowDrop %}
+                <p class="text-danger">
+                    {{ 'allowDrop'|trans }} {% if not dropZone.manualPlanning %} - From {{ dropZone.startAllowDrop|date('formatDatetime'|trans) }} to {{ dropZone.endAllowDrop|date('formatDatetime'|trans) }} {% endif %}
+                </p>
+            {% endif %}
+            {% if dropZone.isPeerReview %}
+                <p class="text-danger">
+                    {{ 'peerReview'|trans }} {% if not dropZone.manualPlanning %} - From {{ dropZone.startReview|date('formatDatetime'|trans) }} to {{ dropZone.endReview|date('formatDatetime'|trans) }} {% endif %}
+                </p>
+            {% endif %}
+            {% if dropZone.isFinished %}
+                <p class="text-danger">
+                    {{ 'finished'|trans }}
+                </p>
+            {% endif %}
 
-        <p class="text-danger">
-            {{ dropZone.currentState }}
-        </p>
+        {% if dropZone.instruction is not null %}
+            <p class="text-muted">
+                Instruction :
+            </p>
+            <p>
+                {{ dropZone.instruction }}
+            </p>
+        {% endif %}
 
-        <p class="text-muted">
-            Instruction :
-        </p>
-        <p>
-            {{ dropZone.instruction }}
-        </p>
 
-        {% if dropZone.currentState == 'allowDrop' or (dropZone.currentState == 'peerReview' and dropZone.allowDropInReview) %}
-            <div>
-                <a href="#" class="btn btn-primary pull-right">Deposit documents</a>
-            </div>
+        {% if drop is not null %}
+            <p class="text-success">
+                Vous avez rendu {{ drop.documents|length }} documents pour cette évaluation.
+            </p>
+        {% endif %}
 
-            drop
-            {% if drop is not null %}
-            {% else %}
+        {% if dropZone.isAllowDrop %}
+            {% if drop is null %}
+                <div>
+                    <a href="{{ path('icap_dropzone_drop', {'resourceId': dropZone.id}) }}" class="btn btn-primary pull-right">Deposit documents</a>
+                </div>
+
                 <p class="text-muted">
                     No deposit for your account
+                </p>
+            {% endif %}
+        {% endif %}
+
+
+        {% if dropZone.isAllowDrop %}
+            {% if drop is not null %}
+                <div>
+                    <a href="#" class="btn btn-primary pull-right">Corriger une copie</a>
+                </div>
+
+                <p class="text-danger">
+                    Il vous reste 3 copies a corriger pour terminer cette évaluation.
                 </p>
             {% endif %}
         {% endif %}

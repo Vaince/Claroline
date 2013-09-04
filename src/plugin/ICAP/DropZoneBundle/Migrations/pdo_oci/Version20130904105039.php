@@ -1,6 +1,6 @@
 <?php
 
-namespace ICAP\DropZoneBundle\Migrations\oci8;
+namespace ICAP\DropZoneBundle\Migrations\pdo_oci;
 
 use Doctrine\DBAL\Migrations\AbstractMigration;
 use Doctrine\DBAL\Schema\Schema;
@@ -8,9 +8,9 @@ use Doctrine\DBAL\Schema\Schema;
 /**
  * Auto-generated migration based on mapping information: modify it with caution
  *
- * Generation date: 2013/09/03 09:38:18
+ * Generation date: 2013/09/04 10:50:41
  */
-class Version20130903093816 extends AbstractMigration
+class Version20130904105039 extends AbstractMigration
 {
     public function up(Schema $schema)
     {
@@ -188,6 +188,9 @@ class Version20130903093816 extends AbstractMigration
             CREATE INDEX IDX_3AD19BA6A76ED395 ON icap__dropzonebundle_drop (user_id)
         ");
         $this->addSql("
+            CREATE UNIQUE INDEX unique_drop_for_user_in_drop_zone ON icap__dropzonebundle_drop (drop_zone_id, user_id)
+        ");
+        $this->addSql("
             CREATE TABLE icap__dropzonebundle_dropzone (
                 id NUMBER(10) NOT NULL, 
                 edition_state NUMBER(5) NOT NULL, 
@@ -197,7 +200,6 @@ class Version20130903093816 extends AbstractMigration
                 allow_url NUMBER(1) NOT NULL, 
                 peer_review NUMBER(1) NOT NULL, 
                 expected_total_correction NUMBER(5) NOT NULL, 
-                allow_drop_in_review NUMBER(1) NOT NULL, 
                 display_notation_to_learners NUMBER(1) NOT NULL, 
                 display_notation_message_to_learners NUMBER(1) NOT NULL, 
                 minimum_score_to_pass NUMBER(5) NOT NULL, 
@@ -205,6 +207,7 @@ class Version20130903093816 extends AbstractMigration
                 manual_state VARCHAR2(255) NOT NULL, 
                 start_allow_drop TIMESTAMP(0) DEFAULT NULL, 
                 end_allow_drop TIMESTAMP(0) DEFAULT NULL, 
+                start_review TIMESTAMP(0) DEFAULT NULL, 
                 end_review TIMESTAMP(0) DEFAULT NULL, 
                 allow_comment_in_correction NUMBER(1) NOT NULL, 
                 total_criteria_column NUMBER(5) NOT NULL, 

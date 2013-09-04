@@ -1,0 +1,18 @@
+{% include "ICAPDropZoneBundle:DropZone:documentForm.html.twig" %}
+
+<script type="text/javascript">
+    $(document).ready(function () {
+//        $('#form-submit').on('click', function () {
+//            console.log('ouai');
+//            //I do the "click" on submit button for keep html5 warning
+//            $('.modal-body button[type="submit"]').trigger('click');
+//        });
+
+        $('a.cancel-inline').bind('click', function(event) {
+            event.preventDefault();
+
+            $('.container-inline').empty();
+            $('.control-inline').show();
+        });
+    });
+</script>

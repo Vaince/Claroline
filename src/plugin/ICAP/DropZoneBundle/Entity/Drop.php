@@ -13,7 +13,7 @@ use Gedmo\Mapping\Annotation as Gedmo;
 
 /**
  * @ORM\Entity
- * @ORM\Table(name="icap__dropzonebundle_drop")
+ * @ORM\Table(name="icap__dropzonebundle_drop", uniqueConstraints={@ORM\UniqueConstraint(name="unique_drop_for_user_in_drop_zone", columns={"drop_zone_id", "user_id"})})
  */
 class Drop {
     /**
@@ -104,6 +104,14 @@ class Drop {
     /**
      * @param mixed $id
      */
+    public function getId()
+    {
+        return $this->id;
+    }
+
+    /**
+     * @param mixed $id
+     */
     public function setId($id)
     {
         $this->id = $id;
@@ -188,4 +196,5 @@ class Drop {
     {
         return $this->finished;
     }
+
 }

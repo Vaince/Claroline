@@ -8,9 +8,9 @@ use Doctrine\DBAL\Schema\Schema;
 /**
  * Auto-generated migration based on mapping information: modify it with caution
  *
- * Generation date: 2013/09/03 09:38:18
+ * Generation date: 2013/09/04 10:50:41
  */
-class Version20130903093816 extends AbstractMigration
+class Version20130904105039 extends AbstractMigration
 {
     public function up(Schema $schema)
     {
@@ -76,6 +76,9 @@ class Version20130903093816 extends AbstractMigration
             CREATE INDEX IDX_3AD19BA6A76ED395 ON icap__dropzonebundle_drop (user_id)
         ");
         $this->addSql("
+            CREATE UNIQUE INDEX unique_drop_for_user_in_drop_zone ON icap__dropzonebundle_drop (drop_zone_id, user_id)
+        ");
+        $this->addSql("
             CREATE TABLE icap__dropzonebundle_dropzone (
                 id INTEGER NOT NULL, 
                 edition_state INTEGER NOT NULL, 
@@ -85,7 +88,6 @@ class Version20130903093816 extends AbstractMigration
                 allow_url BOOLEAN NOT NULL, 
                 peer_review BOOLEAN NOT NULL, 
                 expected_total_correction INTEGER NOT NULL, 
-                allow_drop_in_review BOOLEAN NOT NULL, 
                 display_notation_to_learners BOOLEAN NOT NULL, 
                 display_notation_message_to_learners BOOLEAN NOT NULL, 
                 minimum_score_to_pass INTEGER NOT NULL, 
@@ -93,6 +95,7 @@ class Version20130903093816 extends AbstractMigration
                 manual_state VARCHAR(255) NOT NULL, 
                 start_allow_drop DATETIME DEFAULT NULL, 
                 end_allow_drop DATETIME DEFAULT NULL, 
+                start_review DATETIME DEFAULT NULL, 
                 end_review DATETIME DEFAULT NULL, 
                 allow_comment_in_correction BOOLEAN NOT NULL, 
                 total_criteria_column INTEGER NOT NULL, 

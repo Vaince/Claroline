@@ -9,10 +9,15 @@ namespace ICAP\DropZoneBundle\Controller;
 
 use Claroline\CoreBundle\Library\Resource\ResourceCollection;
 use ICAP\DropZoneBundle\Entity\Criterion;
+use ICAP\DropZoneBundle\Entity\Document;
 use ICAP\DropZoneBundle\Entity\Drop;
 use ICAP\DropZoneBundle\Entity\DropZone;
 use ICAP\DropZoneBundle\Form\CriterionDeleteType;
 use ICAP\DropZoneBundle\Form\CriterionType;
+use ICAP\DropZoneBundle\Form\DocumentDeleteType;
+use ICAP\DropZoneBundle\Form\DocumentFileType;
+use ICAP\DropZoneBundle\Form\DocumentResourceType;
+use ICAP\DropZoneBundle\Form\DocumentUrlType;
 use ICAP\DropZoneBundle\Form\DropType;
 use ICAP\DropZoneBundle\Form\DropZoneCommonType;
 use ICAP\DropZoneBundle\Form\DropZoneCriteriaType;
@@ -27,6 +32,7 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
 use Symfony\Component\Form\FormError;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Security\Core\Exception\AccessDeniedException;
+use Symfony\Component\Security\Core\Exception\BadCredentialsException;
 
 class DropZoneController extends Controller {
 
@@ -48,27 +54,6 @@ class DropZoneController extends Controller {
         $this->isAllow($dropZone, 'OPEN');
     }
 
-    /**
-     * @Route(
-     *      "/{resourceId}/open",
-     *      name="icap_dropzone_open",
-     *      requirements={"resourceId" = "\d+"}
-     * )
-     * @ParamConverter("dropZone", class="ICAPDropZoneBundle:DropZone", options={"id" = "resourceId"})
-     * @ParamConverter("user", options={"authenticatedUser" = true})
-     * @Template()
-     */
-    public function openAction($dropZone, $user)
-    {
-        //Participant view for a dropZone
-        $this->isAllowToOpen($dropZone);
-
-        return array(
-            'workspace' => $dropZone->getResourceNode()->getWorkspace(),
-            'dropZone' => $dropZone,
-            'pathArray' => $dropZone->getPathArray(),
-        );
-    }
     /**
      * @Route(
      *      "/{resourceId}/drops",
@@ -153,10 +138,22 @@ class DropZoneController extends Controller {
                         $form->get('endAllowDrop')->addError(new FormError('Must be after start allow drop'));
                     }
                 }
-                if ($dropZone->getEndAllowDrop() !== null && $dropZone->getEndReview() !== null) {
+                if ($dropZone->getStartReview() !== null && $dropZone->getEndReview() !== null) {
+                    if ($dropZone->getStartReview()->getTimestamp() > $dropZone->getEndReview()->getTimestamp()) {
+                        $form->get('startReview')->addError(new FormError('Must be before end peer review'));
+                        $form->get('endReview')->addError(new FormError('Must be after start peer review'));
+                    }
+                }
+                if($dropZone->getStartAllowDrop() !== null && $dropZone->getStartReview() !== null) {
+                    if ($dropZone->getStartAllowDrop()->getTimestamp() > $dropZone->getStartReview()->getTimestamp()) {
+                        $form->get('startReview')->addError(new FormError('Must be after start allow drop'));
+                        $form->get('startAllowDrop')->addError(new FormError('Must be before start peer review'));
+                    }
+                }
+                if($dropZone->getEndAllowDrop() !== null && $dropZone->getEndReview() !== null) {
                     if ($dropZone->getEndAllowDrop()->getTimestamp() > $dropZone->getEndReview()->getTimestamp()) {
-                        $form->get('endAllowDrop')->addError(new FormError('Must be before end peer review'));
                         $form->get('endReview')->addError(new FormError('Must be after end allow drop'));
+                        $form->get('endAllowDrop')->addError(new FormError('Must be before end peer review'));
                     }
                 }
             }
@@ -179,10 +176,6 @@ class DropZoneController extends Controller {
                         )
                     )
                 );
-            } else {
-//                echo('<pre>');
-//                var_dump($form->getErrors());
-//                echo('</pre>');
             }
         }
 
@@ -506,6 +499,33 @@ class DropZoneController extends Controller {
 
     /**
      * @Route(
+     *      "/{resourceId}/open",
+     *      name="icap_dropzone_open",
+     *      requirements={"resourceId" = "\d+"}
+     * )
+     * @ParamConverter("dropZone", class="ICAPDropZoneBundle:DropZone", options={"id" = "resourceId"})
+     * @ParamConverter("user", options={"authenticatedUser" = true})
+     * @Template()
+     */
+    public function openAction($dropZone, $user)
+    {
+        //Participant view for a dropZone
+        $this->isAllowToOpen($dropZone);
+
+        $em = $this->getDoctrine()->getManager();
+        $dropRepo = $em->getRepository('ICAPDropZoneBundle:Drop');
+        $drop = $dropRepo->findOneBy(array('dropZone' => $dropZone, 'user' => $user, 'finished' => true));
+
+        return array(
+            'workspace' => $dropZone->getResourceNode()->getWorkspace(),
+            'dropZone' => $dropZone,
+            'drop' => $drop,
+            'pathArray' => $dropZone->getPathArray(),
+        );
+    }
+
+    /**
+     * @Route(
      *      "/{resourceId}/drop",
      *      name="icap_dropzone_drop",
      *      requirements={"resourceId" = "\d+"}
@@ -534,15 +554,189 @@ class DropZoneController extends Controller {
 
             $em->persist($notFinishedDrop);
             $em->flush();
+            $em->refresh($notFinishedDrop);
         }
 
         $form = $this->createForm(new DropType(), $notFinishedDrop);
+        $drop = $notFinishedDrop;
+
+        if ($this->getRequest()->isMethod('POST')) {
+            $form->handleRequest($this->getRequest());
+
+            if (count($notFinishedDrop->getDocuments()) == 0) {
+                $form->addError(new FormError('Add at least one document'));
+            }
+
+            if ($form->isValid()) {
+                $notFinishedDrop->setFinished(true);
+
+                $em = $this->getDoctrine()->getManager();
+                $em->persist($notFinishedDrop);
+                $em->flush();
+
+                return $this->redirect(
+                    $this->generateUrl(
+                        'icap_dropzone_open',
+                        array(
+                            'resourceId' => $dropZone->getId()
+                        )
+                    )
+                );
+            }
+        }
 
         return array(
             'workspace' => $dropZone->getResourceNode()->getWorkspace(),
             'dropZone' => $dropZone,
+            'drop' => $drop,
             'pathArray' => $dropZone->getPathArray(),
             'form' => $form->createView(),
+        );
+    }
+
+    /**
+     * @Route(
+     *      "/{resourceId}/document/{documentType}/{dropId}",
+     *      name="icap_dropzone_document",
+     *      requirements={"resourceId" = "\d+", "dropId" = "\d+", "documentType" = "url|file|resource"}
+     * )
+     * @ParamConverter("dropZone", class="ICAPDropZoneBundle:DropZone", options={"id" = "resourceId"})
+     * @ParamConverter("user", options={"authenticatedUser" = true})
+     * @ParamConverter("drop", class="ICAPDropZoneBundle:Drop", options={"id" = "dropId"})
+     * @Template()
+     */
+    public function documentAction($dropZone, $user, $documentType, $drop)
+    {
+        $this->isAllowToOpen($dropZone);
+
+        $formType = null;
+        if ($documentType == 'url') {
+            if (!$dropZone->getAllowUrl()) {
+                throw new AccessDeniedException();
+            }
+            $formType = new DocumentUrlType();
+        } else if ($documentType == 'file') {
+            if (!$dropZone->getAllowUpload()) {
+                throw new AccessDeniedException();
+            }
+            $formType = new DocumentFileType();
+        } else if ($documentType == 'resource') {
+            if (!$dropZone->getAllowWorkspaceResource()) {
+                throw new AccessDeniedException();
+            }
+            $formType = new DocumentResourceType();
+        }
+
+        $form = $this->createForm($formType);
+
+        if ($this->getRequest()->isMethod('POST')) {
+            $form->handleRequest($this->getRequest());
+
+            if ($form->isValid()) {
+                $document = new Document();
+                if ($documentType == 'url') {
+                    $document->setUrl($form->getData()['document']);
+                }
+                if ($documentType == 'file') {
+                    $file = $form->getData()['document'];
+                    var_dump($file);
+                    die();
+                }
+
+                $document->setDrop($drop);
+
+                $em = $this->getDoctrine()->getManager();
+                $em->persist($document);
+                $em->flush();
+
+                return $this->redirect(
+                    $this->generateUrl(
+                        'icap_dropzone_drop',
+                        array(
+                            'resourceId' => $dropZone->getId()
+                        )
+                    )
+                );
+            }
+        }
+
+        $view = 'ICAPDropZoneBundle:DropZone:document.html.twig';
+        if ($this->getRequest()->isXMLHttpRequest()) {
+            $view = 'ICAPDropZoneBundle:DropZone:documentInline.html.twig';
+        }
+
+        return $this->render(
+            $view,
+            array(
+                'workspace' => $dropZone->getResourceNode()->getWorkspace(),
+                'dropZone' => $dropZone,
+                'drop' => $drop,
+                'documentType' => $documentType,
+                'pathArray' => $dropZone->getPathArray(),
+                'form' => $form->createView(),
+            )
+        );
+    }
+
+    /**
+     * @Route(
+     *      "/{resourceId}/delete/document/{dropId}/{documentId}",
+     *      name="icap_dropzone_delete_document",
+     *      requirements={"resourceId" = "\d+", "dropId" = "\d+"}
+     * )
+     * @ParamConverter("dropZone", class="ICAPDropZoneBundle:DropZone", options={"id" = "resourceId"})
+     * @ParamConverter("user", options={"authenticatedUser" = true})
+     * @ParamConverter("drop", class="ICAPDropZoneBundle:Drop", options={"id" = "dropId"})
+     * @ParamConverter("document", class="ICAPDropZoneBundle:Document", options={"id" = "documentId"})
+     * @Template()
+     */
+    public function deleteDocumentAction($dropZone, $user, $drop, $document)
+    {
+        $this->isAllowToOpen($dropZone);
+
+        if ($drop->getId() != $document->getDrop()->getId()) {
+            throw new \HttpInvalidParamException();
+        }
+
+        if ($drop->getUser()->getId() != $user->getId()) {
+            throw new AccessDeniedException();
+        }
+
+        $form = $this->createForm(new DocumentDeleteType(), $document);
+
+        if ($this->getRequest()->isMethod('POST')) {
+            $form->handleRequest($this->getRequest());
+            if ($form->isValid()) {
+                $em = $this->getDoctrine()->getManager();
+                $em->remove($document);
+                $em->flush();
+
+                return $this->redirect(
+                    $this->generateUrl(
+                        'icap_dropzone_drop',
+                        array(
+                            'resourceId' => $dropZone->getId()
+                        )
+                    )
+                );
+            }
+        }
+
+        $view = 'ICAPDropZoneBundle:DropZone:deleteDocument.html.twig';
+        if ($this->getRequest()->isXMLHttpRequest()) {
+            $view = 'ICAPDropZoneBundle:DropZone:deleteDocumentModal.html.twig';
+        }
+
+        return $this->render(
+            $view,
+            array(
+                'workspace' => $dropZone->getResourceNode()->getWorkspace(),
+                'dropZone' => $dropZone,
+                'drop' => $drop,
+                'document' => $document,
+                'pathArray' => $dropZone->getPathArray(),
+                'form' => $form->createView(),
+            )
         );
     }
 }

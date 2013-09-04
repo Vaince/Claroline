@@ -48,7 +48,6 @@
 
             <div class="col-lg-offset-3 col-lg-9 peer-review-options">
                 {{ form_row(form.expectedTotalCorrection, {'type': 'number', 'input_col_size': 'col-lg-6', 'label_col_size': 'col-lg-6', 'attr': {'style': 'width: 60px;'}, 'label_attr': {'class': 'control-label', 'style': 'font-weight: normal;'}}) }}
-                {{ form_row(form.allowDropInReview, {'label_col_size': ' '}) }}
             </div>
         </div>
         <h4>{{ 'Rating'|trans }}</h4>
@@ -87,6 +86,11 @@
         <div class="form-group">
             <div class="row col-lg-offset-2">
                 {{ form_row(form.endAllowDrop, {'label_attr': {'class': 'control-label', 'style': 'font-weight: normal;'}}) }}
+            </div>
+        </div>
+        <div class="form-group">
+            <div class="row col-lg-offset-2 peer-review-options">
+                {{ form_row(form.startReview, {'label_attr': {'class': 'control-label', 'style': 'font-weight: normal;'}}) }}
             </div>
         </div>
         <div class="form-group">
@@ -137,7 +141,7 @@
 {% endblock %}
 
 {% block stylesheets %}
-    {{ parent() }}}
+    {{ parent() }}
     <style>
         .form-control.time {
             width: 50px;
