@@ -1,0 +1,35 @@
+{% extends "ICAPDropZoneBundle:DropZone:drops.html.twig" %}
+
+{% block dropzone_content_drops %}
+    <div class="navbar navbar-default" role="navigation">
+        <div class="collapse navbar-collapse navbar-ex1-collapse">
+            <ul class="nav navbar-nav">
+                <li>
+                    <a href="{{ path('icap_dropzone_drops_by_user', {'resourceId': dropZone.id}) }}">
+                        {{ 'Copies evaluated by user'|trans }}
+                    </a>
+                </li>
+                <li class="active">
+                    <a href="{{ path('icap_dropzone_drops_by_date', {'resourceId': dropZone.id}) }}">
+                        {{ 'Copies evaluated by date'|trans }}
+                    </a>
+                </li>
+                <li>
+                    <a href="{{ path('icap_dropzone_drops_awaiting', {'resourceId': dropZone.id}) }}">
+                        {{ 'Copies awaiting evaluation'|trans }}
+                    </a>
+                </li>
+            </ul>
+        </div>
+    </div>
+    <h3>{{ 'Common information'|trans }}</h3>
+
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}}
+{% endblock %}
+
+{% block stylesheets %}
+    {{ parent() }}
+{% endblock %}

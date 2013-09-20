@@ -6,22 +6,21 @@ use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 
-class DocumentFileType extends AbstractType
+class CorrectCriteriaPageType extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
-        $builder->add('document', 'file',  array('required' => false, 'label' => 'file document'));
+        $builder
+            ->add('instruction', 'textarea');
     }
 
     public function getName()
     {
-        return 'icap_dropzone_document_file_form';
+        return 'icap_dropzone_criterion_form';
     }
 
     public function setDefaultOptions(OptionsResolverInterface $resolver)
     {
-        $resolver->setDefaults(array(
-            'translation_domain' => 'icap_dropzone',
-        ));
+        $resolver->setDefaults(array());
     }
 }

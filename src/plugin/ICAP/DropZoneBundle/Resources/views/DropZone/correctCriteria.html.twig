@@ -1,0 +1,43 @@
+{% extends "ICAPDropZoneBundle::layout.html.twig" %}
+{% block dropzone_breadcrumb %}
+    <li class="active"><span class="glyphicon icon-file"></span> {{ dropZone.resourceNode.name }}</li>
+{% endblock %}
+
+{% block dropzone_content %}
+    <div class="container container-dropzone">
+        <h2>Correct drop zone</h2>
+    </div>
+
+    <h3>
+        Documents concernés :
+    </h3>
+    <ul>
+        <li><a href="#">Mon rendu.pdf</a></li>
+        <li><a href="#">Annexes.pdf</a></li>
+    </ul>
+
+    <h3>
+        Questionnaire d'évaluation :
+    </h3>
+
+    <div class="container">
+        <form
+        {% for criterion in dropZone.peerReviewCriteria %}
+            <div class="row form-group">
+                <div class="col-md-8">
+                    {{ criterion.instruction }}
+                </div>
+                <div class="col-md-4">
+                    {% for i in 1..dropZone.totalCriteriaColumn %}
+                        <input type="radio" name="{{ criterion.id }}" value="{{ i }}"/>
+                    {% endfor %}
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}}
+{% endblock %}

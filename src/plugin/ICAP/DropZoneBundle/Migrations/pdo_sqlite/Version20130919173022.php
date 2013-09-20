@@ -8,9 +8,9 @@ use Doctrine\DBAL\Schema\Schema;
 /**
  * Auto-generated migration based on mapping information: modify it with caution
  *
- * Generation date: 2013/09/04 10:50:41
+ * Generation date: 2013/09/19 05:30:24
  */
-class Version20130904105039 extends AbstractMigration
+class Version20130919173022 extends AbstractMigration
 {
     public function up(Schema $schema)
     {
@@ -18,17 +18,29 @@ class Version20130904105039 extends AbstractMigration
             CREATE TABLE icap__dropzonebundle_correction (
                 id INTEGER NOT NULL, 
                 user_id INTEGER NOT NULL, 
-                total_grade INTEGER DEFAULT NULL, 
+                drop_id INTEGER DEFAULT NULL, 
+                drop_zone_id INTEGER NOT NULL, 
+                total_grade NUMERIC(10, 2) DEFAULT NULL, 
                 comment CLOB DEFAULT NULL, 
                 valid BOOLEAN NOT NULL, 
                 start_date DATETIME NOT NULL, 
+                last_open_date DATETIME NOT NULL, 
                 end_date DATETIME DEFAULT NULL, 
                 finished BOOLEAN NOT NULL, 
+                editable BOOLEAN NOT NULL, 
+                reporter BOOLEAN NOT NULL, 
+                reportComment CLOB DEFAULT NULL, 
                 PRIMARY KEY(id)
             )
         ");
         $this->addSql("
             CREATE INDEX IDX_CDA81F40A76ED395 ON icap__dropzonebundle_correction (user_id)
+        ");
+        $this->addSql("
+            CREATE INDEX IDX_CDA81F404D224760 ON icap__dropzonebundle_correction (drop_id)
+        ");
+        $this->addSql("
+            CREATE INDEX IDX_CDA81F40A8C6E7BD ON icap__dropzonebundle_correction (drop_zone_id)
         ");
         $this->addSql("
             CREATE TABLE icap__dropzonebundle_criterion (
@@ -64,7 +76,6 @@ class Version20130904105039 extends AbstractMigration
                 user_id INTEGER NOT NULL, 
                 drop_date DATETIME NOT NULL, 
                 reported BOOLEAN NOT NULL, 
-                valid BOOLEAN NOT NULL, 
                 finished BOOLEAN NOT NULL, 
                 PRIMARY KEY(id)
             )
@@ -86,6 +97,7 @@ class Version20130904105039 extends AbstractMigration
                 allow_workspace_resource BOOLEAN NOT NULL, 
                 allow_upload BOOLEAN NOT NULL, 
                 allow_url BOOLEAN NOT NULL, 
+                allow_rich_text BOOLEAN NOT NULL, 
                 peer_review BOOLEAN NOT NULL, 
                 expected_total_correction INTEGER NOT NULL, 
                 display_notation_to_learners BOOLEAN NOT NULL, 
@@ -120,6 +132,9 @@ class Version20130904105039 extends AbstractMigration
         ");
         $this->addSql("
             CREATE INDEX IDX_B3C52D9394AE086B ON icap__dropzonebundle_grade (correction_id)
+        ");
+        $this->addSql("
+            CREATE UNIQUE INDEX unique_grade_for_criterion_and_correction ON icap__dropzonebundle_grade (criterion_id, correction_id)
         ");
     }
 

@@ -1,0 +1,18 @@
+<form class="form-horizontal" method="POST" action="{{ path('icap_dropzone_drops_invalidate', {'resourceId': dropZone.id, 'dropId':drop.id, 'tab': tab, 'page': page}) }}">
+    {{ form_errors(form) }}
+
+    <div class="container">
+        {{ drop.user.firstName }} {{ drop.user.lastName }}
+    </div>
+
+    <div class="container form-group form-buttons">
+        <div class="btn-group pull-right">
+            <a href="{{ path(previousPath, {'resourceId': dropZone.id, 'page': page}) }}" class="btn btn-default">
+                {{ 'Cancel'|trans }}
+            </a>
+            <button type="submit" class="btn btn-danger">
+                {{ 'Confirm invalidate'|trans }}
+            </button>
+        </div>
+    </div>
+{{ form_end(form) }}

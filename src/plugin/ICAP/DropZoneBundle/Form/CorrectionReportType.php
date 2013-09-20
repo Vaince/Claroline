@@ -6,22 +6,28 @@ use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 
-class DocumentResourceType extends AbstractType
+class CorrectionCommentType extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
-        $builder->add('document', 'text',  array('required' => false, 'label' => 'resource document'));
+
+        $params = array('required' => true);
+
+        if ($options['edit'] === false) {
+            $params['read_only'] = 'true';
+        }
+        $builder->add('comment', 'textarea', $params);
     }
 
     public function getName()
     {
-        return 'icap_dropzone_document_resource_form';
+        return 'icap_dropzone_correct_comment_form';
     }
 
     public function setDefaultOptions(OptionsResolverInterface $resolver)
     {
         $resolver->setDefaults(array(
-            'translation_domain' => 'icap_dropzone',
+            'edit' => true,
         ));
     }
 }
